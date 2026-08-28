@@ -11,3 +11,8 @@
 \newcommand{\StudentID}{XXXXXXXXXX}
 \newcommand{\StudentName}{Your Name}
 \newcommand{\DefaultCollaborators}{}
+
+% What this subject calls a unit of work — used as the default title
+% ("\AssignmentLabel N") and footer when \asgntitle's title argument is left
+% empty. Change per subject: Assignment, Homework, Lab, Activity, Task, ...
+\newcommand{\AssignmentLabel}{Assignment}

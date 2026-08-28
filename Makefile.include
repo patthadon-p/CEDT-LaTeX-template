@@ -14,12 +14,12 @@ LATEXINDENT_CONF := $(TEMPLATE_DIR)/.latexindent.yaml
 
 help:
 	@echo "Usage:"
-	@echo "  make build DIR=assignment-06   Build a single project with latexmk"
-	@echo "  make watch DIR=assignment-06   Build and rebuild on save (latexmk -pvc)"
-	@echo "  make clean DIR=assignment-06   Remove build artifacts for one project"
+	@echo "  make build DIR=<folder>        Build a single project with latexmk (e.g. DIR=assignment-06)"
+	@echo "  make watch DIR=<folder>        Build and rebuild on save (latexmk -pvc)"
+	@echo "  make clean DIR=<folder>        Remove build artifacts for one project"
 	@echo "  make clean-all                 Remove build artifacts for every project"
-	@echo "  make new NAME=assignment-07    Scaffold a new assignment folder from the template"
-	@echo "  make fmt DIR=assignment-06     Format one project's .tex files in place"
+	@echo "  make new NAME=<number-or-name> Scaffold a new folder from the template (prefix from \\AssignmentLabel in course-config.tex)"
+	@echo "  make fmt DIR=<folder>          Format one project's .tex files in place"
 	@echo "  make fmt-all                   Format every project's .tex files in place"
 
 build:

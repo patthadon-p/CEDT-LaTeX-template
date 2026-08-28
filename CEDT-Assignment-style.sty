@@ -95,10 +95,13 @@
 }
 
 % =========================== Title command ===========================
+% Falls back to \AssignmentLabel (e.g. "Assignment", "Homework", "Lab") when
+% no explicit title (#2) is given, so a subject that calls its units something
+% else only has to change course-config.tex, not this file.
 \newcommand{\asgntitle}[5]{
   \begin{center}
     \ifx&#2&
-    {\LARGE \bfseries Assignment #1} \\[6pt]
+    {\LARGE \bfseries \AssignmentLabel\space #1} \\[6pt]
     \else
     {\LARGE \bfseries #2} \\[6pt]
     \fi
@@ -112,7 +115,7 @@
   \end{center}
 
   \ifx&#2&
-  \fancyfoot[C]{\textbf{Assignment #1}}
+  \fancyfoot[C]{\textbf{\AssignmentLabel\space #1}}
   \else
   \fancyfoot[C]{\textbf{#2}}
   \fi
