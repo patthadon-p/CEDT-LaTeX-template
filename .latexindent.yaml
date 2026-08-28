@@ -1,0 +1,28 @@
+# Local latexindent settings for this repo, layered on top of latexindent's
+# own defaultSettings.yaml (which already indents with a tab, matching the
+# style already used across these assignments).
+#
+# Usage:
+#   make fmt DIR=assignment-06   # format one project in place
+#   make fmt-all                 # format every project in place
+#
+# Both targets pass -l so this file is picked up regardless of cwd.
+
+# codingbox (CEDT-Assignment-style.sty) holds literal source code inside
+# \begin{codingbox}...\end{codingbox}. Without this, latexindent would
+# reflow/reindent the code itself instead of leaving it verbatim.
+verbatimEnvironments:
+  codingbox: 1
+
+# subproblems / subproblems_alpha / Tsubsubproblems (CEDT-Assignment-style.sty)
+# are custom \item lists, same as itemize/enumerate. Without this, wrapped
+# lines after \item wouldn't get the continuation indent itemize/enumerate
+# get by default.
+indentAfterItems:
+  subproblems: 1
+  subproblems_alpha: 1
+  Tsubsubproblems: 1
+
+# Keep only the most recent backup file instead of accumulating
+# myfile.bak0, myfile.bak1, myfile.bak2, ...
+onlyOneBackUp: 1

@@ -1,0 +1,77 @@
+\documentclass[a4paper, 10pt]{article}
+\input{../course-config}
+\usepackage{../vendor/template/CEDT-Assignment-style}
+
+\begin{document}
+\subject
+\asgntitle{X}{}{Week x - x}{\StudentID\ \StudentName}{\DefaultCollaborators}
+
+% ================================================================================ %
+\section{PUT THE SECTION HERE}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                    Problem 0x                                    %
+% ================================================================================ %
+\begin{problem}
+Here's problem statement.
+\begin{codingbox}
+    print("You can insert code like this")
+\end{codingbox}
+You can insert sub-problem
+\begin{subproblems}
+	\item Here's sub-problem a.
+	\item Here's sub-problem b.
+	\item Here's sub-problem c.
+\end{subproblems}
+\end{problem}
+
+\begin{solution}
+	The solution goes here.
+\end{solution}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                    Problem 0x                                    %
+% ================================================================================ %
+\begin{problem}
+Here's the problem statement for \textbf{MANDATORY} problem.
+\end{problem}
+
+\begin{tosubmit}
+	Here's the solution for the \textbf{MANDATORY} problem. \\
+	ABC.
+\end{tosubmit}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                    Problem 0x                                    %
+% ================================================================================ %
+\begin{problem}
+Here's the problem statement for \textbf{PROVING} problem.
+\end{problem}
+
+\begin{proofbox}
+	Here's the proof for the \textbf{PROVING} problem.
+\end{proofbox}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                    Problem 0x                                    %
+% ================================================================================ %
+\begin{problem}
+Here's a \textbf{multiple choice} problem statement. Use \verb|\choices| to lay
+out the options; it defaults to 4 choices and picks 4, 2, or 1 columns on its
+own depending on how long the choices are.
+\begin{subproblems}
+	\item Short choices sit four to a row.
+	      \choices{True, False, Maybe, Unknown}
+	\item Longer choices wrap down to two columns automatically.
+	      \choices{The probability increases, The probability decreases, The probability stays the same, Not enough information to tell}
+	\item Pass the choice count explicitly when it isn't 4.
+	      \choices[6]{A, B, C, D, E, F}
+\end{subproblems}
+\end{problem}
+% ================================================================================ %
+
+\end{document}

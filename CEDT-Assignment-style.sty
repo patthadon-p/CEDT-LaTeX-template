@@ -1,0 +1,562 @@
+\NeedsTeXFormat{LaTeX2e}
+
+% =========================== Basic packages ===========================
+\RequirePackage{amsmath, amssymb, amsthm} % Math environments and symbols
+\RequirePackage{geometry} % Page margins
+\RequirePackage{fancyhdr} % Headers and footers
+\RequirePackage{enumitem} % Custom lists
+\RequirePackage{hyperref} % Clickable references
+\RequirePackage{graphicx} % Images (\includegraphics)
+\RequirePackage{tikz} % Diagrams
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\RequirePackage{xcolor} % Color support
+
+% Use Package
+\usepackage{soul}
+\usepackage{float}
+\usepackage{braket}
+\usepackage{cancel}
+\usepackage{esvect}
+\usepackage{xparse}
+\usepackage{environ}
+\usepackage{amssymb}
+\usepackage{sectsty}
+\usepackage{caption}
+\usepackage{etoolbox}
+\usepackage{listings}
+\usepackage{mathrsfs}
+\usepackage{makecell}
+\usepackage{mdframed}
+\usepackage{booktabs}
+\usepackage{arydshln}
+\usepackage{pdfpages}
+\usepackage{inconsolata}
+\usepackage[T1]{fontenc}
+\usepackage[most]{tcolorbox}
+\usepackage{tabularx}
+\captionsetup{labelfont=bf}
+
+\allowdisplaybreaks
+
+% =========================== Page setup ===========================
+\geometry{
+  a4paper,
+  left=3cm,
+  right=3cm,
+  top=3cm,
+  bottom=3cm,
+}
+\setlength{\headheight}{14.49998pt}
+\sectionfont{\large}
+
+% =========================== Header and footer setup ===========================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{}
+\fancyhead[R]{\thepage}
+
+\renewcommand{\footrulewidth}{0.4pt}
+
+\newcommand{\currentsubject}{}
+
+% \subject with no argument falls back to \CourseCode/\CourseName, which must
+% be defined beforehand (normally by \input-ing course-config.tex — see
+% course-config.tex.example in this template repo).
+\NewDocumentCommand{\subject}{o}{%
+  \IfNoValueTF{#1}
+    {%
+      \ifdefined\CourseCode
+        \renewcommand{\currentsubject}{\CourseCode\space - \CourseName}%
+      \else
+        \PackageError{CEDT-Assignment-style}{\string\subject\space needs \string\CourseCode/\string\CourseName\space to be defined (input course-config.tex before calling \string\subject) or an explicit argument}{}%
+      \fi
+    }
+    {\renewcommand{\currentsubject}{#1}}%
+  \fancyhead[L]{\textbf{\currentsubject}}%
+}
+
+\newcommand{\currentfooter}{}
+
+\newcommand{\setfooter}[1]{%
+  \renewcommand{\currentfooter}{#1}%
+  \fancyfoot[C]{\textbf{#1}}%
+}
+
+% =========================== Set paragraph spacing ===========================
+\setlength{\parskip}{4pt}       % Space between paragraphs  
+
+% =========================== Set Vertical and Horizontal Spacing ===========================
+\NewDocumentCommand{\myspace}{ O{v} O{4} O{mm} }{%
+  \ifstrequal{#1}{h}
+  {\hspace{#2#3}}
+  {\vspace{#2#3}}%
+}
+
+% =========================== Title command ===========================
+\newcommand{\asgntitle}[5]{
+  \begin{center}
+    \ifx&#2&
+    {\LARGE \bfseries Assignment #1} \\[6pt]
+    \else
+    {\LARGE \bfseries #2} \\[6pt]
+    \fi
+    {\large #3} \\[2pt]
+    {\small \text{#4}} \\
+    \ifx&#5&
+    %
+    \else
+    {\small \textit{Collaborators.} #5}%
+    \fi
+  \end{center}
+
+  \ifx&#2&
+  \fancyfoot[C]{\textbf{Assignment #1}}
+  \else
+  \fancyfoot[C]{\textbf{#2}}
+  \fi
+
+  \vspace{12pt}
+  \hrule
+  \vspace{12pt}
+}
+
+% =========================== Problem environment ===========================
+%Counter
+\newcounter{problem}
+\renewcommand{\theproblem}{\arabic{problem}}
+
+% Storage for used numbers
+\newcommand{\usedproblems}{}
+
+% Recursive macro to find next unused number
+\newcommand{\nextunusedproblem}{
+  \stepcounter{problem}
+  \edef\thisNum{\theproblem}
+  \ifinlist{\thisNum}{\usedproblems}
+  {\nextunusedproblem} % continue recursion
+  {} % stop if unused
+}
+
+\newenvironment{problem}[1][]{
+  \vspace{1em}
+  \def\maybeNum{#1}
+  \ifx\maybeNum\empty
+    % auto mode
+    \nextunusedproblem
+  \else
+    % manual mode
+    \setcounter{problem}{\maybeNum}
+    \edef\thisNum{\theproblem}
+    \ifinlist{\thisNum}{\usedproblems}
+    {\PackageWarning{problem}{Problem number \thisNum\space already used; reusing it}}%
+    {}
+  \fi
+  % Now record number only once
+  \ifinlist{\thisNum}{\usedproblems}{}{
+    \listadd{\usedproblems}{\thisNum}
+  }
+  % Typeset
+  \par\noindent\textbf{Problem \thisNum. }\ignorespaces
+}{
+  \par\vspace{10pt}
+}
+
+% =========================== Common math shortcuts ===========================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\paren}[1]{\left(#1\right)}
+\newcommand{\sqbracket}[1]{\left[#1\right]}
+
+% =========================== Theorem styles ===========================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% =========================== Custom enumerate for subproblems ===========================
+\newlist{subproblems}{enumerate}{2}
+\setlist[subproblems]{
+  label*=\arabic{problem}.\arabic*,
+  ref=\arabic{problem}.\arabic*,
+  wide=0pt,
+  itemsep=2pt,
+  parsep=0pt,
+  leftmargin=*
+}
+
+\newlist{subproblems_alpha}{enumerate}{2}
+\setlist[subproblems_alpha]{
+  label*=\alph*),
+  ref=\alph*),
+  wide=0pt,
+  itemsep=2pt,
+  parsep=0pt,
+  leftmargin=*
+}
+
+\newlist{Tsubsubproblems}{enumerate}{3}
+\setlist[Tsubsubproblems]{
+  label*=T\arabic{problem}.\arabic{subproblemsi}.\arabic*,
+  ref=T\arabic{problem}.\arabic{subproblemsi}.\arabic*,
+  wide=0pt,
+  itemsep=2pt,
+  parsep=0pt,
+  leftmargin=*,
+}
+
+% =========================== Hyperref setup ===========================
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=cyan,
+  citecolor=blue,
+}
+
+% =========================== Solution ===========================
+\newtcolorbox{solution}[1][]{
+  enhanced,
+  breakable,
+  colback=gray!10!white,
+  colframe=black,
+  fonttitle=\bfseries,
+  title=Solution.\enspace,
+  coltitle=black,
+  arc=0pt,
+  attach title to upper,
+  boxed title style=colback=gray!25!white,
+  #1,
+}
+
+% =========================== To Submit ===========================
+\newcommand{\submitsolution}{%
+  \par\noindent
+  \textbf{\textcolor{red!50!black}{Solution.\enspace}}%
+}
+
+\newtcolorbox{tosubmit}[1][]{
+  enhanced,
+  breakable,
+  colback=yellow!5!white,
+  colframe=red!65!black,
+  fonttitle=\bfseries,
+  title=TO SUBMIT,
+  coltitle=white,
+  arc=0pt,
+  attach boxed title to top center={yshift=-2mm},
+  boxed title style={
+      colback=red!65!black,
+      colframe=red!65!black,
+      width=0.5\linewidth,
+      sharp corners,
+      boxrule=0pt,
+      enlarge left by=0mm,
+      enlarge right by=0mm,
+      halign=center,
+    },
+  parbox=false,
+  before upper={
+      \setlength{\parindent}{0pt}%
+      \noindent
+      \submitsolution
+    },
+  #1
+}
+
+% =========================== Proof ===========================
+\newtcolorbox{proofbox}[1][]{
+  enhanced,
+  breakable,
+  colback=blue!5!white,
+  colframe=blue!75!black,
+  fonttitle=\bfseries,
+  title=\textit{Proof}.\enspace,
+  coltitle=blue!75!black,
+  attach title to upper,
+  boxed title style=colback=blue!25!white,
+  #1,
+}
+
+% =========================== Coding ===========================
+\tcbuselibrary{listings, breakable, skins}
+
+% ======================================
+% Colors
+% ======================================
+
+% Editor background
+\definecolor{editorbg}{HTML}{F3F3F3}
+
+% Main text
+\definecolor{editortext}{HTML}{1E1E1E}
+
+% Syntax colors
+\definecolor{keywordcolor}{HTML}{0000FF}
+\definecolor{stringcolor}{HTML}{C06000}
+\definecolor{commentcolor}{HTML}{008000}
+\definecolor{numbercolor}{HTML}{A0A0A0}
+
+\definecolor{editorbg}{HTML}{F5F5F5}
+\definecolor{gutterbg}{HTML}{606060}
+
+\definecolor{outerborder}{HTML}{505050}
+
+\definecolor{guttertext}{HTML}{EFEFEF}
+
+% ======================================
+% Listings Style
+% ======================================
+
+\lstdefinestyle{notepadstyle}{
+  language=Python,
+  backgroundcolor=\color{editorbg},
+  basicstyle=\ttfamily\small\color{editortext},
+  tabsize=2,
+  keywordstyle=\bfseries\color{keywordcolor},
+  commentstyle=\upshape\color{commentcolor},
+  numberstyle=\tiny\color{numbercolor},
+  stringstyle=\color{stringcolor},
+  numbers=left,
+  numberstyle=\footnotesize\ttfamily\color{guttertext},
+  numbersep=10pt,
+  xleftmargin=24pt,
+  showstringspaces=false,
+  keepspaces=true,
+  breaklines=true,
+  columns=fullflexible,
+  frame=none,
+  aboveskip=0pt,
+  belowskip=0pt
+}
+
+% ======================================
+% Code Box
+% ======================================
+
+\newtcblisting{codingbox}[1][]{
+  enhanced,
+  breakable,
+  colback=editorbg,
+  colframe=outerborder,
+  boxrule=1pt,
+  left=0pt,
+  right=6pt,
+  top=6pt,
+  bottom=6pt,
+  underlay={
+      \fill[gutterbg]
+      (frame.north west)
+      rectangle
+      ([xshift=24pt]frame.south west);
+    },
+  overlay={
+      % Vertical separator
+      \draw[outerborder, line width=0.5pt]
+      ([xshift=24pt]frame.north west) --
+      ([xshift=24pt]frame.south west);
+    },
+  listing only,
+  listing engine=listings,
+  % tcolorbox's default "listing file" is a bare `\jobname.listing` (no
+  % path). Under this repo's per-project -aux-directory=.build setup, kpathsea
+  % resolves that bare filename against .build/ *before* the current
+  % directory, so it keeps re-reading the very first .build/*.listing ever
+  % written there instead of the fresh copy tcolorbox writes to cwd on every
+  % run -- the box silently shows stale (e.g. leftover template) code no
+  % matter how many times you rebuild. An explicit ./-prefixed, per-box
+  % filename bypasses that search-path ambiguity and always resolves to cwd.
+  listing file={./\jobname-codingbox-\thetcblistingcount.listing},
+  listing options={
+      style=notepadstyle,
+      #1
+    }
+}
+
+% =========================== Figures ===========================
+% Usage: \fig[width]{path}{caption}{label}
+%   width defaults to 0.7\linewidth; the label is prefixed with "fig:"
+%   \fig*[width]{path}{caption}{label} drops the "Figure N:" caption/label
+%   entirely (just the centered image) -- caption/label are still required
+%   syntactically but are ignored, so pass {} for both when starred.
+\NewDocumentCommand{\fig}{s O{0.7\linewidth} m m m}{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=#2]{#3}
+    \IfBooleanF{#1}{%
+      \caption{#4}%
+      \label{fig:#5}%
+    }%
+  \end{figure}%
+}
+
+% =========================== Tables ===========================
+% Usage: \begin{simpletable}{<colspec>}{<caption>}{<label>}
+%   write rows as normal (add \midrule after the header row yourself);
+%   the label is prefixed with "tab:"
+\NewDocumentEnvironment{simpletable}{m m m}{%
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{#1}
+      \toprule
+      }{%
+      \bottomrule
+    \end{tabular}
+    \caption{#2}
+    \label{tab:#3}
+  \end{table}
+}
+
+% =========================== Multiple choice ===========================
+% Usage: \choices[<num choices>]{choice A, choice B, choice C, choice D}
+%   <num choices> is optional and defaults to 4; it should match the number
+%   of comma-separated choices actually given. A mismatch only prints a
+%   PackageWarning, it still typesets whatever was given. If a choice needs
+%   a literal comma in it, wrap that choice in braces, e.g. {1{,}000 baht}.
+%   The layout automatically switches between 4, 2, or 1 columns depending
+%   on how wide the longest choice is, so short choices ("True", "False",
+%   ...) sit four to a row, medium ones wrap to two, and long ones (full
+%   sentences) go one per line. It never uses more columns than there are
+%   choices.
+\newlength{\choicewidth}
+\newlength{\choicemaxwidth}
+\newcounter{choiceindex}
+\newcounter{choicetotal}
+\newcounter{choicecols}
+\newcounter{choicecursor}
+\newcommand{\choicerows}{}
+\newcommand{\choicelabeltmp}{}
+
+\NewDocumentCommand{\choices}{O{4} m}{%
+  \begingroup
+  \vspace{6pt}%
+  % ---- Pass 1: count the choices and find the widest one ----
+  \setcounter{choiceindex}{0}%
+  \setlength{\choicemaxwidth}{0pt}%
+  \renewcommand{\do}[1]{%
+    \stepcounter{choiceindex}%
+    \settowidth{\choicewidth}{\Alph{choiceindex}.~##1}%
+    \ifdim\choicewidth>\choicemaxwidth
+      \setlength{\choicemaxwidth}{\choicewidth}%
+    \fi
+  }%
+  \docsvlist{#2}%
+  \setcounter{choicetotal}{\value{choiceindex}}%
+  \ifnum\value{choicetotal}=#1\else
+    \PackageWarning{choices}{Got \arabic{choicetotal}\space choice(s) but #1 were expected}%
+  \fi
+  % ---- Pick 4 / 2 / 1 columns from the widest choice ----
+  % Compare against the *real* per-column width tabularx will end up with
+  % (total width minus the \tabcolsep gaps between columns), not a flat
+  % fraction of \linewidth, and leave a 10% safety margin. Comparing
+  % against the flat fraction let the widest choice "just barely" pass the
+  % check and then not actually fit once \tabcolsep overhead was taken out,
+  % producing a marginal Overfull \hbox on nearly every call.
+  \setlength{\choicewidth}{\dimexpr(\linewidth-6\tabcolsep)/4\relax}%
+  \ifdim\choicemaxwidth<0.9\choicewidth
+    \setcounter{choicecols}{4}%
+  \else
+    \setlength{\choicewidth}{\dimexpr(\linewidth-2\tabcolsep)/2\relax}%
+    \ifdim\choicemaxwidth<0.9\choicewidth
+      \setcounter{choicecols}{2}%
+    \else
+      \setcounter{choicecols}{1}%
+    \fi
+  \fi
+  \ifnum\value{choicecols}>\value{choicetotal}%
+    \setcounter{choicecols}{\value{choicetotal}}%
+  \fi
+  % ---- Pass 2: pre-build the row content as inert text ----
+  % (tabularx typesets X-column content twice to size it, so anything with
+  % side effects -- counters, \ifnum -- has to be resolved before it gets
+  % there; \choicerows ends up as a plain string of "label & label \\ ...")
+  \renewcommand{\choicerows}{}%
+  \setcounter{choiceindex}{0}%
+  \setcounter{choicecursor}{0}%
+  \renewcommand{\do}[1]{%
+    \stepcounter{choiceindex}%
+    \ifnum\value{choiceindex}=1\relax
+    \else
+      \ifnum\value{choicecursor}=0\relax
+        \appto{\choicerows}{\\}%
+      \else
+        \appto{\choicerows}{&}%
+      \fi
+    \fi
+    \edef\choicelabeltmp{\Alph{choiceindex}.~}%
+    \eappto{\choicerows}{\choicelabeltmp}%
+    \appto{\choicerows}{##1}%
+    \stepcounter{choicecursor}%
+    \ifnum\value{choicecursor}=\value{choicecols}%
+      \setcounter{choicecursor}{0}%
+    \fi
+  }%
+  \docsvlist{#2}%
+  % ---- Pass 3: typeset the pre-built rows in a tabularx grid ----
+  % \par\noindent has to sit directly against \begin{tabularx} (nothing, not
+  % even a comment line, between them) -- \noindent opens horizontal mode,
+  % and anything typeset in between before the environment forces its own
+  % \par left stray material sitting in that same (never-broken) paragraph,
+  % which showed up as a phantom Overfull \hbox once the table finally
+  % forced the line to break.
+  \par\noindent\begin{tabularx}{\linewidth}{@{}*{\value{choicecols}}{>{\raggedright\arraybackslash}X}@{}}%
+    \choicerows
+  \end{tabularx}%
+  \vspace{4pt}%
+  \endgroup
+}
+
+% =========================== Appendix inclusion ===========================
+
+% Appendix title page style
+\fancypagestyle{appendixtitle}{
+  \fancyhf{}
+  \fancyhead[L]{\textbf{\currentsubject}}
+  \fancyhead[R]{\thepage}
+  \fancyfoot[C]{\textbf{\currentfooter}}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% Appendix counter
+\newcounter{myappendix}
+
+\newcommand{\myappendix}[2]{%
+  % #1 = path/to/file.pdf
+  % #2 = appendix title (PDF name / description)
+
+  \refstepcounter{myappendix}
+
+  % ---------- Title page ----------
+  \clearpage
+  \thispagestyle{appendixtitle}
+
+  \vspace*{\fill}
+  \begin{center}
+    {\Huge\bfseries APPENDIX~\arabic{myappendix}\par}
+    \vspace{1.5em}
+    {\huge #2\par}
+  \end{center}
+  \vspace*{\fill}
+
+  \clearpage
+
+  % ---------- PDF content ----------
+  \includepdf[
+    pages=-,
+    pagecommand={},
+  ]{#1}
+}
+
+% ==============================================

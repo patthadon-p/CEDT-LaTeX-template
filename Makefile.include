@@ -1,0 +1,61 @@
+# Shared build rules for a CEDT subject repo.
+#
+# The consuming repo's own Makefile should just be:
+#
+#   TEMPLATE_DIR := $(CURDIR)/vendor/template
+#   include $(TEMPLATE_DIR)/Makefile.include
+#
+# TEMPLATE_DIR must be set (absolute path) before this file is included.
+
+PROJECTS := $(sort $(patsubst %/,%,$(dir $(wildcard */.latexmkrc))))
+LATEXINDENT_CONF := $(TEMPLATE_DIR)/.latexindent.yaml
+
+.PHONY: help build watch clean clean-all new fmt fmt-all
+
+help:
+	@echo "Usage:"
+	@echo "  make build DIR=assignment-06   Build a single project with latexmk"
+	@echo "  make watch DIR=assignment-06   Build and rebuild on save (latexmk -pvc)"
+	@echo "  make clean DIR=assignment-06   Remove build artifacts for one project"
+	@echo "  make clean-all                 Remove build artifacts for every project"
+	@echo "  make new NAME=assignment-07    Scaffold a new assignment folder from the template"
+	@echo "  make fmt DIR=assignment-06     Format one project's .tex files in place"
+	@echo "  make fmt-all                   Format every project's .tex files in place"
+
+build:
+	@test -n "$(DIR)" || (echo "Usage: make build DIR=assignment-06" >&2 && exit 1)
+	@test -d "$(DIR)" || (echo "No such directory: $(DIR)" >&2 && exit 1)
+	cd "$(DIR)" && latexmk
+
+watch:
+	@test -n "$(DIR)" || (echo "Usage: make watch DIR=assignment-06" >&2 && exit 1)
+	@test -d "$(DIR)" || (echo "No such directory: $(DIR)" >&2 && exit 1)
+	cd "$(DIR)" && latexmk -pvc
+
+clean:
+	@test -n "$(DIR)" || (echo "Usage: make clean DIR=assignment-06" >&2 && exit 1)
+	@test -d "$(DIR)" || (echo "No such directory: $(DIR)" >&2 && exit 1)
+	cd "$(DIR)" && latexmk -C
+
+clean-all:
+	@for d in $(PROJECTS); do \
+		echo "Cleaning $$d"; \
+		(cd "$$d" && latexmk -C); \
+	done
+
+new:
+	@test -n "$(NAME)" || (echo "Usage: make new NAME=assignment-07" >&2 && exit 1)
+	"$(TEMPLATE_DIR)/new-assignment.sh" "$(NAME)" "$(CURDIR)" "$(TEMPLATE_DIR)"
+
+fmt:
+	@test -n "$(DIR)" || (echo "Usage: make fmt DIR=assignment-06" >&2 && exit 1)
+	@test -d "$(DIR)" || (echo "No such directory: $(DIR)" >&2 && exit 1)
+	@mkdir -p "$(DIR)/.build"
+	latexindent -w -s -c "$(DIR)/.build/" -l="$(LATEXINDENT_CONF)" "$(DIR)"/*.tex
+
+fmt-all:
+	@for d in $(PROJECTS); do \
+		echo "Formatting $$d"; \
+		mkdir -p "$$d/.build"; \
+		latexindent -w -s -c "$$d/.build/" -l="$(LATEXINDENT_CONF)" "$$d"/*.tex; \
+	done
