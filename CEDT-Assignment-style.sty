@@ -29,6 +29,7 @@
 \usepackage{mathrsfs}
 \usepackage{makecell}
 \usepackage{mdframed}
+\usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{arydshln}
 \usepackage{pdfpages}
@@ -66,14 +67,14 @@
 % course-config.tex.example in this template repo).
 \NewDocumentCommand{\subject}{o}{%
   \IfNoValueTF{#1}
-    {%
-      \ifdefined\CourseCode
-        \renewcommand{\currentsubject}{\CourseCode\space - \CourseName}%
-      \else
-        \PackageError{CEDT-Assignment-style}{\string\subject\space needs \string\CourseCode/\string\CourseName\space to be defined (input course-config.tex before calling \string\subject) or an explicit argument}{}%
-      \fi
-    }
-    {\renewcommand{\currentsubject}{#1}}%
+  {%
+    \ifdefined\CourseCode
+      \renewcommand{\currentsubject}{\CourseCode\space - \CourseName}%
+    \else
+      \PackageError{CEDT-Assignment-style}{\string\subject\space needs \string\CourseCode/\string\CourseName\space to be defined (input course-config.tex before calling \string\subject) or an explicit argument}{}%
+    \fi
+  }
+  {\renewcommand{\currentsubject}{#1}}%
   \fancyhead[L]{\textbf{\currentsubject}}%
 }
 
