@@ -1,0 +1,241 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage{scrextend}
+\changefontsizes{9pt}
+% This file lives at vendor/template/templates/style-guide/ once vendored
+% into a subject repo -- course-config.tex sits at the subject repo root (4
+% levels up), while CEDT-Assignment-style.sty sits at the vendor/template/
+% root itself (2 levels up; no need to spell "vendor/template" again, we're
+% already inside it).
+\input{../../../../course-config}
+\usepackage{../../CEDT-Assignment-style}
+
+\begin{document}
+\subject
+\asgntitle{}{CEDT-Assignment-style Reference}{Every macro and environment this style provides, with a worked example}{\StudentID\ \StudentName}{}
+% \setfooter overrides the footer \asgntitle just set above -- useful when you
+% want a shorter running footer than the full printed title.
+\setfooter{Style Reference}
+
+\tableofcontents
+
+% ================================================================================ %
+\section{Math shortcuts}
+% ================================================================================ %
+Common number sets and delimiters get short macros so you don't have to
+remember the \texttt{amsmath} spelling every time:
+\begin{itemize}
+	\item Sets: $\R$, $\C$, $\Z$, $\N$ -- \verb|\R \C \Z \N|
+	\item Delimiters: $\abs{x}$, $\norm{v}$, $\paren{a+b}$, $\sqbracket{a,b}$ --
+	      \verb|\abs \norm \paren \sqbracket|
+\end{itemize}
+For example: $\forall x \in \R,\ \abs{x} \geq 0$, and
+$\norm{v} = \sqrt{\paren{v_1^2 + v_2^2}}$.
+
+% ================================================================================ %
+\section{Problems and sub-problems}
+% ================================================================================ %
+\begin{problem}
+\verb|problem| auto-numbers itself. Sub-items nest under \verb|subproblems|
+(decimal, e.g. 2.1) by default:
+\begin{subproblems}
+	\item Decimal sub-items look like this.
+	\item A sub-item can go one level deeper with \verb|Tsubsubproblems|:
+	      \begin{Tsubsubproblems}
+		      \item A "T"-prefixed third nesting level -- adjust the fixed "T" in
+		            the style file if it doesn't fit your subject.
+		      \item Another one at the same depth.
+	      \end{Tsubsubproblems}
+\end{subproblems}
+Or letter-labelled with \verb|subproblems_alpha| instead:
+\begin{subproblems_alpha}
+	\item Like this.
+	\item And this.
+\end{subproblems_alpha}
+\end{problem}
+
+\begin{problem}[10]
+Passing a number, e.g. \verb|\begin{problem}[10]|, sets/reuses that exact
+problem number instead of auto-incrementing -- handy when your numbering has
+to match a printed assignment sheet. Auto-numbering after this continues from
+whatever the highest-used number is, skipping any manually reused ones.
+\end{problem}
+
+% ================================================================================ %
+\section{Theorem-style environments}
+% ================================================================================ %
+Standard numbered \texttt{amsthm} environments are set up too --
+\texttt{theorem}/\texttt{lemma}/\texttt{proposition}/\texttt{corollary} share
+one counter, \texttt{definition} numbers separately, and \texttt{remark} is
+unnumbered:
+
+\begin{definition}
+	An integer $n$ is \emph{even} if $n = 2k$ for some $k \in \Z$.
+\end{definition}
+
+\begin{theorem}[Fundamental theorem of arithmetic]
+	Every integer greater than $1$ has a unique prime factorization, up to the
+	order of factors.
+\end{theorem}
+
+\begin{lemma}
+	If $n^2$ is even, then $n$ is even.
+\end{lemma}
+
+\begin{proposition}
+	The sum of two even integers is even.
+\end{proposition}
+
+\begin{corollary}
+	If $n$ is even, then $n^2$ is even.
+\end{corollary}
+
+\begin{remark}
+	These come straight from \texttt{amsthm} -- nothing custom beyond the
+	numbering/sharing scheme set up in the style file.
+\end{remark}
+
+% ================================================================================ %
+\section{Solution, proof, and to-submit boxes}
+% ================================================================================ %
+\begin{problem}
+Worked-through answers that aren't the graded deliverable pair with
+\verb|solution|.
+\end{problem}
+\begin{solution}
+	The full derivation goes here.
+
+	A second paragraph indents correctly too -- \texttt{CEDT-Assignment-style.sty}
+	restores \verb|\parindent| inside every breakable box below (tcolorbox's
+	\texttt{breakable} library, needed so long boxes can split across a page,
+	zeroes it internally otherwise).
+\end{solution}
+
+\begin{problem}
+A problem that must be proven pairs with \verb|proofbox|.
+\end{problem}
+\begin{proofbox}
+	The proof goes here.
+
+	A second paragraph, indented the same way. \hfill\qedsymbol
+\end{proofbox}
+
+\begin{problem}
+A problem whose final answer must be called out for grading pairs with
+\verb|tosubmit| -- its corner tab reads "TO SUBMIT | Solution" rather than
+just "TO SUBMIT".
+\end{problem}
+\begin{tosubmit}
+	This is what a grader should look at directly.
+
+	A second paragraph here indents too.
+\end{tosubmit}
+
+All three corner-tab labels shown so far -- "Solution", "Proof", "TO SUBMIT
+| Solution" -- are just each box's default; pass \verb|title=...| through
+the optional argument to override one for a single use, no \texttt{.sty}
+edit needed (same mechanism as \verb|codingbox|'s
+\verb|[language=C++]| below):
+\begin{tosubmit}[title={FINAL ANSWER | Solution}]
+	A custom label via \verb!\begin{tosubmit}[title={FINAL ANSWER | Solution}]!.
+\end{tosubmit}
+
+% ================================================================================ %
+\section{Code blocks}
+% ================================================================================ %
+\verb|codingbox| defaults to Python, but any language \texttt{listings} ships
+a \verb|\lstdefinelanguage| for works via its \texttt{language} option:
+\begin{codingbox}
+    print("Python is the default language")
+\end{codingbox}
+\begin{codingbox}[language=C++]
+#include <iostream>
+
+int main() {
+    // Compute the first 10 Fibonacci numbers
+    int a = 0, b = 1;
+    for (int i = 0; i < 10; ++i) {
+        std::cout << a << " ";
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+    return 0;
+}
+\end{codingbox}
+\begin{codingbox}[language=bash]
+#!/usr/bin/env bash
+# Print the first 10 Fibonacci numbers
+a=0
+b=1
+for _ in $(seq 1 10); do
+    echo -n "$a "
+    next=$((a + b))
+    a=$b
+    b=$next
+done
+\end{codingbox}
+
+% ================================================================================ %
+\section{Figures}
+% ================================================================================ %
+\verb|\fig[width]{path}{caption}{label}| centers an image in a numbered,
+captioned, labelled \texttt{figure} float (width defaults to
+\verb|0.7\linewidth|):
+\fig{../template/images/fibonacci-example.png}{A numbered, captioned figure.}{fib-numbered}
+
+The starred form, \verb|\fig*[width]{path}{}{}|, drops the caption/label
+entirely -- just the centered image (the last two arguments are still
+required syntactically, but ignored, so pass \verb|{}{}|):
+\fig*[0.4\linewidth]{../template/images/fibonacci-example.png}{}{}
+
+% ================================================================================ %
+\section{Tables}
+% ================================================================================ %
+\verb|\begin{simpletable}{<colspec>}{<caption>}{<label>}| wraps a
+\texttt{booktabs}-style table with a numbered caption/label -- write rows as
+normal and add \verb|\midrule| after the header yourself:
+\begin{simpletable}{lcc}{Truth table for logical AND}{and-truth}
+	$A$ & $B$ & $A \wedge B$ \\
+	\midrule
+	0   & 0   & 0             \\
+	0   & 1   & 0             \\
+	1   & 0   & 0             \\
+	1   & 1   & 1             \\
+\end{simpletable}
+
+% ================================================================================ %
+\section{Multiple choice}
+% ================================================================================ %
+\begin{problem}
+\verb|\choices[<num choices>]{choice A, choice B, ...}| lays out options,
+auto-picking 4, 2, or 1 columns depending on how long the choices are (never
+more columns than there are choices):
+\begin{subproblems}
+	\item Short choices sit four to a row.
+	      \choices{True, False, Maybe, Unknown}
+	\item Longer choices wrap down to two columns automatically.
+	      \choices{The probability increases, The probability decreases, The probability stays the same, Not enough information to tell}
+	\item Pass the choice count explicitly when it isn't 4.
+	      \choices[6]{A, B, C, D, E, F}
+\end{subproblems}
+\end{problem}
+
+% ================================================================================ %
+\section{Spacing helper}
+% ================================================================================ %
+\verb|\myspace[h|\emph{or}\verb| v][amount][unit]| wraps \verb|\hspace|/\verb|\vspace|;
+all three arguments are optional and default to \verb|\myspace| = \verb|\vspace{4mm}|.
+For example, \verb|A\myspace[h][1][cm]B| gives A\myspace[h][1][cm]B (a 1cm gap
+between A and B on the same line).
+
+% ================================================================================ %
+%                                     Appendix                                     %
+% ================================================================================ %
+% \myappendix{path/to/code.pdf}{Title} appends a title page + the full PDF
+% (e.g. a notebook exported with `make nb-pdf`). Safe to point at a real file
+% here since this reference doc, unlike assignment-template.tex, never gets
+% copied into a fresh assignment folder. (../template/code/ -- the demo
+% notebook lives next to assignment-template.tex, not next to this file.)
+\myappendix{../template/code/notebook-template.pdf}{notebook-template | Code Solution}
+
+\end{document}

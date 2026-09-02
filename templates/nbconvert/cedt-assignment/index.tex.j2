@@ -1,0 +1,74 @@
+((*- extends 'latex/index.tex.j2' -*))
+
+%===============================================================================
+% Pulls in the shared CEDT-Assignment-style.sty (fonts, a4paper + 3cm margins,
+% header/footer, problem/solution/codingbox environments) plus the subject's
+% own course-config.tex, so notebook-exported PDFs
+% (`jupyter nbconvert --to pdf --template cedt-assignment ...`, or `make nb-pdf`)
+% look consistent with the LaTeX assignment write-ups. Both files are vendored
+% via git submodule / owned per-subject-repo -- see this template repo's
+% README.md for how they're located below.
+%===============================================================================
+
+((*- block docclass -*))
+\documentclass[a4paper, 10pt]{article}
+((*- endblock docclass -*))
+
+((*- block packages -*))
+    % Match the 9pt body-text size used in templates/assignment-template.tex
+    % (see course-config.tex.example / feat/styling): rescale every relative
+    % size (\normalsize, \small, \large, ...) here, before anything else is
+    % loaded, so headers/footers/body text/code blocks all shrink together.
+    \usepackage{scrextend}
+    \changefontsizes{9pt}
+    %
+    % style_jupyter.tex.j2 (pulled in via super(), below) does its own
+    % `\usepackage[breakable]{tcolorbox}`, and CEDT-Assignment-style does
+    % `\usepackage[most]{tcolorbox}` -- two \usepackage{tcolorbox} calls with
+    % different option strings is a hard "Option clash" error regardless of
+    % which one runs first or whether one option set is a logical subset of
+    % the other. LaTeX's clash check is a literal *string* comparison of
+    % accumulated option tokens -- it has no idea "most" implies "breakable"
+    % as a tcolorbox library, so passing only "most" here still leaves a
+    % literal "breakable" clash. \PassOptionsToPackage queues both literal
+    % tokens before tcolorbox is actually loaded by either call, so whichever
+    % \usepackage{tcolorbox} fires first absorbs both, and the second
+    % (redundant) call is then a true subset of what's already recorded --
+    % no clash.
+    \PassOptionsToPackage{most,breakable}{tcolorbox}
+    % Same clash, same fix: base.tex.j2 loads `\usepackage[inline]{enumitem}`
+    % while CEDT-Assignment-style loads plain `\usepackage{enumitem}`.
+    \PassOptionsToPackage{inline}{enumitem}
+    %
+    % nbconvert's PDFExporter always compiles in an isolated temp directory
+    % (see nbconvert/exporters/pdf.py), so a relative path -- to either the
+    % submodule's CEDT-Assignment-style.sty or the subject repo's own
+    % course-config.tex -- can never resolve here no matter how it's written:
+    % the temp dir has no relation to where the notebook, the submodule, or
+    % course-config.tex actually live. Instead rely on kpathsea/TEXINPUTS:
+    % `make nb-pdf` exports TEXINPUTS covering both the subject repo root
+    % (for course-config.tex) and vendor/template/ (for the .sty), so these
+    % bare-filename lookups find both regardless of how deeply the notebook
+    % is nested (assignment-XX/, assignment-XX/code/, ...). Running nbconvert
+    % by hand instead of via `make nb-pdf`? Set TEXINPUTS the same way first
+    % -- see this template repo's README.md.
+    \makeatletter
+    \IfFileExists{course-config.tex}
+      {\input{course-config}}
+      {\PackageWarning{cedt-assignment}{course-config.tex not found on TEXINPUTS -- \string\subject\space below will error. export TEXINPUTS="<subject repo root>:$TEXINPUTS" before running jupyter nbconvert}}
+    \IfFileExists{CEDT-Assignment-style.sty}
+      {\usepackage{CEDT-Assignment-style}}
+      {\PackageWarning{cedt-assignment}{CEDT-Assignment-style.sty not found on TEXINPUTS -- export TEXINPUTS="<subject repo root>:<subject repo root>/vendor/template:$TEXINPUTS" before running jupyter nbconvert}}
+    \makeatother
+    ((( super() )))
+((*- endblock packages *))
+
+((*- block margins *))
+    % CEDT-Assignment-style already sets a4paper + 3cm margins via \geometry;
+    % skip nbconvert's default 1in \geometry call so it doesn't override that.
+((*- endblock margins *))
+
+((*- block predoc *))
+    \subject
+    ((( super() )))
+((*- endblock predoc *))

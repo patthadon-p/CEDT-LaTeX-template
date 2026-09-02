@@ -230,6 +230,37 @@
   citecolor=blue,
 }
 
+% tcolorbox's `breakable` library (used by solution/proofbox/tosubmit below,
+% for page-breaking bookkeeping) resets \parindent to 0 internally, so
+% without restoring it, every paragraph after the first inside these boxes
+% loses its first-line indent -- even though plain body text and \problem
+% (not a tcolorbox) keep theirs. Capture the real \parindent once, so it
+% always matches whatever the surrounding document actually uses.
+%
+% This deliberately does NOT also force indentation on each box's own FIRST
+% paragraph (unlike every later one) -- LaTeX never auto-indents the first
+% paragraph after a sectional unit/environment by default anyway (same
+% reason plain body text's own very first paragraph isn't indented either),
+% so this matches that existing convention rather than fighting it.
+% Tried forcing it via \indent and separately via \leavevmode\hspace{...}
+% appended to `before upper`; both intermittently broke the *second*
+% paragraph's indentation instead (tcolorbox's `breakable` library
+% apparently doesn't always close its own internal \parindent-zeroing group
+% cleanly, so which paragraphs came out indented depended on unrelated
+% content elsewhere in the document -- not reproducible by any single
+% property of the box or its title). Not worth that risk for what's a
+% cosmetic nicety; \setlength alone is the version actually verified stable.
+\newlength{\cedtparindent}
+\AtBeginDocument{\setlength{\cedtparindent}{\parindent}}
+
+% Solution/proofbox/tosubmit below each take an optional tcolorbox keyval
+% argument (their trailing #1) that's appended after every default they set,
+% so any key -- most usefully title=... -- overrides that box's default for
+% one use, e.g. \begin{solution}[title=Alternate Answer] ... \end{solution},
+% with no need to touch this file. Same mechanism as codingbox's
+% [language=C++]; see templates/style-guide/style-guide.tex for a worked
+% example.
+
 % =========================== Solution ===========================
 \newtcolorbox{solution}[1][]{
   enhanced,
@@ -237,46 +268,41 @@
   colback=gray!10!white,
   colframe=black,
   fonttitle=\bfseries,
-  title=Solution.\enspace,
-  coltitle=black,
+  title=Solution, % default label; override per-use with [title=...]
+  coltitle=white,
   arc=0pt,
-  attach title to upper,
-  boxed title style=colback=gray!25!white,
+  attach boxed title to top left={yshift=-2mm, xshift=2mm},
+  boxed title style={
+      colback=black,
+      colframe=black,
+      sharp corners,
+      boxrule=0pt,
+      halign=left,
+    },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1,
 }
 
 % =========================== To Submit ===========================
-\newcommand{\submitsolution}{%
-  \par\noindent
-  \textbf{\textcolor{red!50!black}{Solution.\enspace}}%
-}
-
 \newtcolorbox{tosubmit}[1][]{
   enhanced,
   breakable,
   colback=yellow!5!white,
   colframe=red!65!black,
   fonttitle=\bfseries,
-  title=TO SUBMIT,
+  title={TO SUBMIT | Solution}, % default label; override per-use with [title=...]
   coltitle=white,
   arc=0pt,
-  attach boxed title to top center={yshift=-2mm},
+  attach boxed title to top left={yshift=-2mm, xshift=2mm},
   boxed title style={
       colback=red!65!black,
       colframe=red!65!black,
-      width=0.5\linewidth,
       sharp corners,
       boxrule=0pt,
-      enlarge left by=0mm,
-      enlarge right by=0mm,
-      halign=center,
+      halign=left,
     },
   parbox=false,
-  before upper={
-      \setlength{\parindent}{0pt}%
-      \noindent
-      \submitsolution
-    },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1
 }
 
@@ -287,10 +313,18 @@
   colback=blue!5!white,
   colframe=blue!75!black,
   fonttitle=\bfseries,
-  title=\textit{Proof}.\enspace,
-  coltitle=blue!75!black,
-  attach title to upper,
-  boxed title style=colback=blue!25!white,
+  title=\textit{Proof}, % default label; override per-use with [title=...]
+  coltitle=white,
+  arc=0pt,
+  attach boxed title to top left={yshift=-2mm, xshift=2mm},
+  boxed title style={
+      colback=blue!75!black,
+      colframe=blue!75!black,
+      sharp corners,
+      boxrule=0pt,
+      halign=left,
+    },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1,
 }
 
@@ -298,40 +332,45 @@
 \tcbuselibrary{listings, breakable, skins}
 
 % ======================================
-% Colors
+% Colors -- GitHub's light-theme code view (Primer palette)
 % ======================================
 
-% Editor background
-\definecolor{editorbg}{HTML}{F3F3F3}
+% Code area background (GitHub blob view is plain white)
+\definecolor{editorbg}{HTML}{FFFFFF}
+
+% Line-number gutter background (GitHub's subtle off-white, not a dark strip)
+\definecolor{gutterbg}{HTML}{F6F8FA}
 
 % Main text
-\definecolor{editortext}{HTML}{1E1E1E}
+\definecolor{editortext}{HTML}{1F2328}
 
 % Syntax colors
-\definecolor{keywordcolor}{HTML}{0000FF}
-\definecolor{stringcolor}{HTML}{C06000}
-\definecolor{commentcolor}{HTML}{008000}
-\definecolor{numbercolor}{HTML}{A0A0A0}
+\definecolor{keywordcolor}{HTML}{CF222E}
+\definecolor{stringcolor}{HTML}{0A3069}
+\definecolor{commentcolor}{HTML}{6E7781}
 
-\definecolor{editorbg}{HTML}{F5F5F5}
-\definecolor{gutterbg}{HTML}{606060}
+% Box border + gutter separator (thin light-gray, not a heavy dark rule)
+\definecolor{outerborder}{HTML}{D0D7DE}
 
-\definecolor{outerborder}{HTML}{505050}
-
-\definecolor{guttertext}{HTML}{EFEFEF}
+% Line-number text
+\definecolor{guttertext}{HTML}{8C959F}
 
 % ======================================
 % Listings Style
 % ======================================
 
 \lstdefinestyle{notepadstyle}{
+  % Default language; \begin{codingbox}[language=C++] (or bash, Java, etc. --
+  % anything listings ships a \lstdefinelanguage for) overrides this per box,
+  % since codingbox's optional arg is appended after `style=notepadstyle` in
+  % the same options list, so it applies last. See
+  % templates/assignment-template.tex for worked C++/bash examples.
   language=Python,
   backgroundcolor=\color{editorbg},
   basicstyle=\ttfamily\small\color{editortext},
   tabsize=2,
   keywordstyle=\bfseries\color{keywordcolor},
   commentstyle=\upshape\color{commentcolor},
-  numberstyle=\tiny\color{numbercolor},
   stringstyle=\color{stringcolor},
   numbers=left,
   numberstyle=\footnotesize\ttfamily\color{guttertext},
@@ -355,7 +394,7 @@
   breakable,
   colback=editorbg,
   colframe=outerborder,
-  boxrule=1pt,
+  boxrule=0.75pt,
   left=0pt,
   right=6pt,
   top=6pt,

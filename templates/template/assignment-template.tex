@@ -1,10 +1,20 @@
 \documentclass[a4paper, 10pt]{article}
+\usepackage{scrextend}
+\changefontsizes{9pt}
 \input{../course-config}
 \usepackage{../vendor/template/CEDT-Assignment-style}
 
 \begin{document}
 \subject
 \asgntitle{X}{}{Week x - x}{\StudentID\ \StudentName}{\DefaultCollaborators}
+
+% This is a lean starting point -- see
+% vendor/template/templates/style-guide/style-guide.pdf (source:
+% .../style-guide.tex) for a worked example of every macro/environment
+% CEDT-Assignment-style.sty provides (theorems, math shortcuts, tables, figures,
+% multi-language codingbox, appendix, ...). Nothing here points at a file that
+% won't exist in a freshly scaffolded assignment folder -- keep it that way, or
+% move file-dependent examples (\fig, \myappendix, ...) to your own solved code.
 
 % ================================================================================ %
 \section{PUT THE SECTION HERE}
@@ -66,10 +76,6 @@ own depending on how long the choices are.
 \begin{subproblems}
 	\item Short choices sit four to a row.
 	      \choices{True, False, Maybe, Unknown}
-	\item Longer choices wrap down to two columns automatically.
-	      \choices{The probability increases, The probability decreases, The probability stays the same, Not enough information to tell}
-	\item Pass the choice count explicitly when it isn't 4.
-	      \choices[6]{A, B, C, D, E, F}
 \end{subproblems}
 \end{problem}
 % ================================================================================ %
