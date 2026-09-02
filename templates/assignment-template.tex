@@ -29,8 +29,46 @@ You can insert sub-problem
 \end{problem}
 
 \begin{solution}
-	The solution goes here.
+	The solution goes here. Supporting figures can be inserted with \verb|\fig|:
+	\fig{images/fibonacci-example.png}{Example figure -- swap in your own image under \texttt{images/}.}{example}
 \end{solution}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                    Problem 0x                                    %
+% ================================================================================ %
+\begin{problem}
+\verb|codingbox| defaults to Python, but any language \texttt{listings} ships a
+\verb|\lstdefinelanguage| for works via its \texttt{language} option, e.g.
+\verb|[language=C++]| or \verb|[language=bash]|.
+\begin{codingbox}[language=C++]
+#include <iostream>
+
+int main() {
+    // Compute the first 10 Fibonacci numbers
+    int a = 0, b = 1;
+    for (int i = 0; i < 10; ++i) {
+        std::cout << a << " ";
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+    return 0;
+}
+\end{codingbox}
+\begin{codingbox}[language=bash]
+#!/usr/bin/env bash
+# Print the first 10 Fibonacci numbers
+a=0
+b=1
+for _ in $(seq 1 10); do
+    echo -n "$a "
+    next=$((a + b))
+    a=$b
+    b=$next
+done
+\end{codingbox}
+\end{problem}
 % ================================================================================ %
 
 % ================================================================================ %
@@ -74,6 +112,15 @@ own depending on how long the choices are.
 	      \choices[6]{A, B, C, D, E, F}
 \end{subproblems}
 \end{problem}
+% ================================================================================ %
+
+% ================================================================================ %
+%                                     Appendix                                     %
+% ================================================================================ %
+% \myappendix{path/to/code.pdf}{Title} appends a title page + the full PDF (e.g.
+% a notebook exported with `make nb-pdf`). Swap in your own assignment's code PDF
+% -- this points at templates/code/notebook-template.pdf just to demonstrate it.
+\myappendix{code/notebook-template.pdf}{notebook-template | Code Solution}
 % ================================================================================ %
 
 \end{document}
