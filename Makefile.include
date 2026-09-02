@@ -9,8 +9,10 @@
 
 PROJECTS := $(sort $(patsubst %/,%,$(dir $(wildcard */.latexmkrc))))
 LATEXINDENT_CONF := $(TEMPLATE_DIR)/.latexindent.yaml
+NBCONVERT_TEMPLATE_DIR := $(TEMPLATE_DIR)/templates/nbconvert
+JUPYTER := $(CURDIR)/.venv/bin/jupyter
 
-.PHONY: help build watch clean clean-all new fmt fmt-all
+.PHONY: help build watch clean clean-all new fmt fmt-all nb-pdf
 
 help:
 	@echo "Usage:"
@@ -21,6 +23,7 @@ help:
 	@echo "  make new NAME=<number-or-name> Scaffold a new folder from the template (prefix from \\AssignmentLabel in course-config.tex)"
 	@echo "  make fmt DIR=<folder>          Format one project's .tex files in place"
 	@echo "  make fmt-all                   Format every project's .tex files in place"
+	@echo "  make nb-pdf NB=<path/to.ipynb> Export a notebook to PDF styled with CEDT-Assignment-style"
 
 build:
 	@test -n "$(DIR)" || (echo "Usage: make build DIR=assignment-06" >&2 && exit 1)
@@ -59,3 +62,12 @@ fmt-all:
 		mkdir -p "$$d/.build"; \
 		latexindent -w -s -c "$$d/.build/" -l="$(LATEXINDENT_CONF)" "$$d"/*.tex; \
 	done
+
+nb-pdf:
+	@test -n "$(NB)" || (echo "Usage: make nb-pdf NB=assignment-01/code/assignment-01.ipynb" >&2 && exit 1)
+	@test -f "$(NB)" || (echo "No such notebook: $(NB)" >&2 && exit 1)
+	@test -x "$(JUPYTER)" || (echo "No jupyter found at $(JUPYTER) -- see .venv/ setup in README.md" >&2 && exit 1)
+	TEXINPUTS="$(CURDIR):$(TEMPLATE_DIR):$$TEXINPUTS" "$(JUPYTER)" nbconvert --to pdf \
+		--TemplateExporter.extra_template_basedirs="$(NBCONVERT_TEMPLATE_DIR)" \
+		--template=cedt-assignment \
+		"$(NB)"
