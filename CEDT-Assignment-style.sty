@@ -33,6 +33,12 @@
 \usepackage{booktabs}
 \usepackage{arydshln}
 \usepackage{pdfpages}
+% Scalable Latin Modern (Computer Modern look, but available at any size) so
+% \changefontsizes{9pt} in the assignment preamble -- which rescales the whole
+% size ladder off CM's fixed design-size grid -- doesn't spray "Font shape ...
+% not available / size ... substituted" warnings. Must precede inconsolata so
+% \ttdefault stays Inconsolata, and precede fontenc per the usual load order.
+\usepackage{lmodern}
 \usepackage{inconsolata}
 \usepackage[T1]{fontenc}
 \usepackage[most]{tcolorbox}
