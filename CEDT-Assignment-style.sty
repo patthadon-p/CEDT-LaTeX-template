@@ -253,6 +253,14 @@
 \newlength{\cedtparindent}
 \AtBeginDocument{\setlength{\cedtparindent}{\parindent}}
 
+% Solution/proofbox/tosubmit below each take an optional tcolorbox keyval
+% argument (their trailing #1) that's appended after every default they set,
+% so any key -- most usefully title=... -- overrides that box's default for
+% one use, e.g. \begin{solution}[title=Alternate Answer] ... \end{solution},
+% with no need to touch this file. Same mechanism as codingbox's
+% [language=C++]; see templates/style-guide/style-guide.tex for a worked
+% example.
+
 % =========================== Solution ===========================
 \newtcolorbox{solution}[1][]{
   enhanced,
@@ -260,7 +268,7 @@
   colback=gray!10!white,
   colframe=black,
   fonttitle=\bfseries,
-  title=Solution,
+  title=Solution, % default label; override per-use with [title=...]
   coltitle=white,
   arc=0pt,
   attach boxed title to top left={yshift=-2mm, xshift=2mm},
@@ -282,7 +290,7 @@
   colback=yellow!5!white,
   colframe=red!65!black,
   fonttitle=\bfseries,
-  title={TO SUBMIT | Solution},
+  title={TO SUBMIT | Solution}, % default label; override per-use with [title=...]
   coltitle=white,
   arc=0pt,
   attach boxed title to top left={yshift=-2mm, xshift=2mm},
@@ -305,7 +313,7 @@
   colback=blue!5!white,
   colframe=blue!75!black,
   fonttitle=\bfseries,
-  title=\textit{Proof},
+  title=\textit{Proof}, % default label; override per-use with [title=...]
   coltitle=white,
   arc=0pt,
   attach boxed title to top left={yshift=-2mm, xshift=2mm},

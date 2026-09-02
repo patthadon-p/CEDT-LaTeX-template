@@ -130,6 +130,15 @@ just "TO SUBMIT".
 	A second paragraph here indents too.
 \end{tosubmit}
 
+All three corner-tab labels shown so far -- "Solution", "Proof", "TO SUBMIT
+| Solution" -- are just each box's default; pass \verb|title=...| through
+the optional argument to override one for a single use, no \texttt{.sty}
+edit needed (same mechanism as \verb|codingbox|'s
+\verb|[language=C++]| below):
+\begin{tosubmit}[title={FINAL ANSWER | Solution}]
+	A custom label via \verb!\begin{tosubmit}[title={FINAL ANSWER | Solution}]!.
+\end{tosubmit}
+
 % ================================================================================ %
 \section{Code blocks}
 % ================================================================================ %
