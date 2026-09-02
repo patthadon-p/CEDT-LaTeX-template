@@ -7,8 +7,19 @@ vendored into each subject repo as a git submodule rather than copy-pasted.
 
 - `CEDT-Assignment-style.sty` — shared style package (problem/solution
   environments, title block, headers/footers, `\choices`, `\fig`, etc.).
-- `templates/assignment-template.tex` — base template for a new assignment.
-- `templates/.latexmkrc` — per-assignment latexmk config (aux dir, synctex).
+- `templates/template/` — everything `make new` copies into a freshly
+  scaffolded assignment: `assignment-template.tex` (deliberately lean — only
+  what every assignment needs, nothing that points at a file that won't exist
+  in a fresh folder), `.latexmkrc`, and demo `code/`/`images/` folders for
+  the style guide's examples below (`new-assignment.sh` creates empty
+  `code/`/`images/` folders of their own alongside every scaffolded
+  assignment — see "Then:" below).
+- `templates/style-guide/` — the exhaustive reference instead:
+  `style-guide.tex` (compiled: `style-guide.pdf`), one worked example of
+  every macro/environment `CEDT-Assignment-style.sty` provides. Never
+  scaffolded by `make new` — it's documentation, not a starting point, so
+  it's free to point at real files in `templates/template/code/` and
+  `templates/template/images/` for its demos.
 - `templates/nbconvert/cedt-assignment/` — custom `jupyter nbconvert` LaTeX
   template so notebook-exported PDFs (`make nb-pdf`) get the same
   fonts/margins/header as the `.tex` write-ups.
@@ -42,6 +53,10 @@ Then:
 make new NAME=assignment-01   # scaffold assignment-01/ from the template
 make build DIR=assignment-01  # compile it
 ```
+
+`make new` creates `assignment-01/assignment-01.tex` plus empty
+`assignment-01/code/` and `assignment-01/images/` folders alongside it, ready
+for a notebook (see "Notebook → styled PDF" below) or `\fig`-ed images.
 
 Each assignment's `.tex` starts with:
 

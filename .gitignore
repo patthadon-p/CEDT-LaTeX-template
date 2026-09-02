@@ -1,24 +1,24 @@
-*/.build/*.aux
-*/.build/*.fdb_latexmk
-*/.build/*.fls
-*/.build/*.log
-*/.build/*.out
-*/.build/*.toc
-*/.build/*.listing
+**/.build/*.aux
+**/.build/*.fdb_latexmk
+**/.build/*.fls
+**/.build/*.log
+**/.build/*.out
+**/.build/*.toc
+**/.build/*.listing
 
 # Some latexmk/pdflatex combos fall back to emulating -aux-directory and
 # leave a duplicate copy of these files next to the .tex source.
-*/*.aux
-*/*.fdb_latexmk
-*/*.fls
-*/*.log
-*/*.out
-*/*.toc
-*/*.listing
-*/*.synctex.gz
+**/*.aux
+**/*.fdb_latexmk
+**/*.fls
+**/*.log
+**/*.out
+**/*.toc
+**/*.listing
+**/*.synctex.gz
 
-*/indent.log
+**/indent.log
 
 # latexindent backup files (see `make fmt`), redirected into .build/
-*/.build/*.bak
-*/*.bak
+**/.build/*.bak
+**/*.bak

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Scaffold a new <prefix>-XX/ folder (prefix from \AssignmentLabel in
-# course-config.tex) from templates/assignment-template.tex.
+# course-config.tex) from templates/template/assignment-template.tex.
 # Meant to be called via `make new NAME=...` in a subject repo, which passes
 # repo-root and template-dir explicitly (this script is vendored via a git
 # submodule, so it can't assume its own location is the subject repo root).
@@ -43,18 +43,18 @@ if [ -e "$target" ]; then
     exit 1
 fi
 
-mkdir -p "$target" "$target/.build"
-cp "$template_dir/templates/.latexmkrc" "$target/.latexmkrc"
+mkdir -p "$target" "$target/.build" "$target/code" "$target/images"
+cp "$template_dir/templates/template/.latexmkrc" "$target/.latexmkrc"
 
 tex_file="$target/$name.tex"
-cp "$template_dir/templates/assignment-template.tex" "$tex_file"
+cp "$template_dir/templates/template/assignment-template.tex" "$tex_file"
 
 if [[ "$name" =~ ^${prefix}-0*([0-9]+)$ ]]; then
     asgnnum="${BASH_REMATCH[1]}"
     sed -i "s/asgntitle{X}/asgntitle{$asgnnum}/" "$tex_file"
 fi
 
-echo "Created $target/$name.tex"
+echo "Created $target/$name.tex (with empty code/ and images/ folders alongside it)"
 echo "Next steps:"
 echo "  1. Fill in the Week number and section title in $tex_file"
 echo "  2. Build with: make build DIR=$name"
