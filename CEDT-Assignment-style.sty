@@ -298,27 +298,28 @@
 \tcbuselibrary{listings, breakable, skins}
 
 % ======================================
-% Colors
+% Colors -- GitHub's light-theme code view (Primer palette)
 % ======================================
 
-% Editor background
-\definecolor{editorbg}{HTML}{F3F3F3}
+% Code area background (GitHub blob view is plain white)
+\definecolor{editorbg}{HTML}{FFFFFF}
+
+% Line-number gutter background (GitHub's subtle off-white, not a dark strip)
+\definecolor{gutterbg}{HTML}{F6F8FA}
 
 % Main text
-\definecolor{editortext}{HTML}{1E1E1E}
+\definecolor{editortext}{HTML}{1F2328}
 
 % Syntax colors
-\definecolor{keywordcolor}{HTML}{0000FF}
-\definecolor{stringcolor}{HTML}{C06000}
-\definecolor{commentcolor}{HTML}{008000}
-\definecolor{numbercolor}{HTML}{A0A0A0}
+\definecolor{keywordcolor}{HTML}{CF222E}
+\definecolor{stringcolor}{HTML}{0A3069}
+\definecolor{commentcolor}{HTML}{6E7781}
 
-\definecolor{editorbg}{HTML}{F5F5F5}
-\definecolor{gutterbg}{HTML}{606060}
+% Box border + gutter separator (thin light-gray, not a heavy dark rule)
+\definecolor{outerborder}{HTML}{D0D7DE}
 
-\definecolor{outerborder}{HTML}{505050}
-
-\definecolor{guttertext}{HTML}{EFEFEF}
+% Line-number text
+\definecolor{guttertext}{HTML}{8C959F}
 
 % ======================================
 % Listings Style
@@ -331,7 +332,6 @@
   tabsize=2,
   keywordstyle=\bfseries\color{keywordcolor},
   commentstyle=\upshape\color{commentcolor},
-  numberstyle=\tiny\color{numbercolor},
   stringstyle=\color{stringcolor},
   numbers=left,
   numberstyle=\footnotesize\ttfamily\color{guttertext},
@@ -355,7 +355,7 @@
   breakable,
   colback=editorbg,
   colframe=outerborder,
-  boxrule=1pt,
+  boxrule=0.75pt,
   left=0pt,
   right=6pt,
   top=6pt,
