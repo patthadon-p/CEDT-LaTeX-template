@@ -230,6 +230,29 @@
   citecolor=blue,
 }
 
+% tcolorbox's `breakable` library (used by solution/proofbox/tosubmit below,
+% for page-breaking bookkeeping) resets \parindent to 0 internally, so
+% without restoring it, every paragraph after the first inside these boxes
+% loses its first-line indent -- even though plain body text and \problem
+% (not a tcolorbox) keep theirs. Capture the real \parindent once, so it
+% always matches whatever the surrounding document actually uses.
+%
+% This deliberately does NOT also force indentation on each box's own FIRST
+% paragraph (unlike every later one) -- LaTeX never auto-indents the first
+% paragraph after a sectional unit/environment by default anyway (same
+% reason plain body text's own very first paragraph isn't indented either),
+% so this matches that existing convention rather than fighting it.
+% Tried forcing it via \indent and separately via \leavevmode\hspace{...}
+% appended to `before upper`; both intermittently broke the *second*
+% paragraph's indentation instead (tcolorbox's `breakable` library
+% apparently doesn't always close its own internal \parindent-zeroing group
+% cleanly, so which paragraphs came out indented depended on unrelated
+% content elsewhere in the document -- not reproducible by any single
+% property of the box or its title). Not worth that risk for what's a
+% cosmetic nicety; \setlength alone is the version actually verified stable.
+\newlength{\cedtparindent}
+\AtBeginDocument{\setlength{\cedtparindent}{\parindent}}
+
 % =========================== Solution ===========================
 \newtcolorbox{solution}[1][]{
   enhanced,
@@ -248,22 +271,18 @@
       boxrule=0pt,
       halign=left,
     },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1,
 }
 
 % =========================== To Submit ===========================
-\newcommand{\submitsolution}{%
-  \par\noindent
-  \textbf{\textcolor{red!50!black}{Solution.\enspace}}%
-}
-
 \newtcolorbox{tosubmit}[1][]{
   enhanced,
   breakable,
   colback=yellow!5!white,
   colframe=red!65!black,
   fonttitle=\bfseries,
-  title=TO SUBMIT,
+  title={TO SUBMIT | Solution},
   coltitle=white,
   arc=0pt,
   attach boxed title to top left={yshift=-2mm, xshift=2mm},
@@ -275,11 +294,7 @@
       halign=left,
     },
   parbox=false,
-  before upper={
-      \setlength{\parindent}{0pt}%
-      \noindent
-      \submitsolution
-    },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1
 }
 
@@ -301,6 +316,7 @@
       boxrule=0pt,
       halign=left,
     },
+  before upper={\setlength{\parindent}{\cedtparindent}},
   #1,
 }
 

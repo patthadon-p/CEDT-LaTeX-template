@@ -103,22 +103,31 @@ Worked-through answers that aren't the graded deliverable pair with
 \end{problem}
 \begin{solution}
 	The full derivation goes here.
+
+	A second paragraph indents correctly too -- \texttt{CEDT-Assignment-style.sty}
+	restores \verb|\parindent| inside every breakable box below (tcolorbox's
+	\texttt{breakable} library, needed so long boxes can split across a page,
+	zeroes it internally otherwise).
 \end{solution}
 
 \begin{problem}
 A problem that must be proven pairs with \verb|proofbox|.
 \end{problem}
 \begin{proofbox}
-	The proof goes here. \hfill\qedsymbol
+	The proof goes here.
+
+	A second paragraph, indented the same way. \hfill\qedsymbol
 \end{proofbox}
 
 \begin{problem}
 A problem whose final answer must be called out for grading pairs with
-\verb|tosubmit| -- it also auto-prefixes the body with a "Solution." label via
-\verb|\submitsolution|, separate from the box's own "TO SUBMIT" corner tab.
+\verb|tosubmit| -- its corner tab reads "TO SUBMIT | Solution" rather than
+just "TO SUBMIT".
 \end{problem}
 \begin{tosubmit}
 	This is what a grader should look at directly.
+
+	A second paragraph here indents too.
 \end{tosubmit}
 
 % ================================================================================ %
