@@ -326,6 +326,11 @@
 % ======================================
 
 \lstdefinestyle{notepadstyle}{
+  % Default language; \begin{codingbox}[language=C++] (or bash, Java, etc. --
+  % anything listings ships a \lstdefinelanguage for) overrides this per box,
+  % since codingbox's optional arg is appended after `style=notepadstyle` in
+  % the same options list, so it applies last. See
+  % templates/assignment-template.tex for worked C++/bash examples.
   language=Python,
   backgroundcolor=\color{editorbg},
   basicstyle=\ttfamily\small\color{editortext},
