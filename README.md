@@ -6,7 +6,8 @@ vendored into each subject repo as a git submodule rather than copy-pasted.
 ## Contents
 
 - `CEDT-Assignment-style.sty` — shared style package (problem/solution
-  environments, title block, headers/footers, `\choices`, `\fig`, etc.).
+  environments, title block, headers/footers, `\choices`, `\fig`, Thai text,
+  etc.). Compiles with **XeLaTeX** (see "Build engine" below).
 - `templates/template/` — everything `make new` copies into a freshly
   scaffolded assignment: `assignment-template.tex` (deliberately lean — only
   what every assignment needs, nothing that points at a file that won't exist
@@ -70,6 +71,41 @@ Each assignment's `.tex` starts with:
 `\StudentName`, `\DefaultCollaborators` the same way — so a new subject repo
 only ever needs to touch `course-config.tex`, never the template itself.
 
+## Build engine
+
+`CEDT-Assignment-style.sty` requires **XeLaTeX** — a Unicode engine is needed
+for Thai (below), and it's already what the notebook → PDF path uses. The
+scaffolded `.latexmkrc` sets `$pdf_mode = 5`, so `make build` / `make watch`
+pick it up automatically. If you compile by hand, use `xelatex` (or
+`latexmk -xelatex`), not `pdflatex`/`lualatex`.
+
+Assignment folders scaffolded before this change keep their own older
+`.latexmkrc`; add `$pdf_mode = 5;` (and `$emulate_aux = 1;`) to it, or re-copy
+it from `vendor/template/templates/template/.latexmkrc`.
+
+## Writing in Thai
+
+The document language is English, but Thai can go anywhere — problem
+statements, `\choices`, section titles, `\asgntitle`. Thai text has to be
+wrapped so it gets the Thai font and the dictionary-based line breaker;
+unwrapped Thai falls back to the Latin font and prints as blank boxes.
+
+```latex
+\textthai{ตัวอักษรไทย}                    % a few words inline
+\begin{thai} ... whole Thai paragraphs ... \end{thai}
+```
+
+The Thai font is Norasi (it carries Latin + italic/bold, so an English word
+inside Thai still typesets). Override per document, after the `\usepackage`:
+
+```latex
+\newfontfamily\thaifont[Script=Thai]{TH Sarabun New}
+```
+
+`templates/style-guide/style-guide.pdf` has the worked examples. (Thai in a
+notebook markdown cell still needs a `\textthai{}` / `thai` wrapper in a raw
+LaTeX cell — plain Thai markdown won't render.)
+
 ## Notebook → styled PDF
 
 For notebook-based assignments, `make nb-pdf` exports a `.ipynb` straight to
@@ -111,6 +147,10 @@ git submodule update --remote --merge vendor/template
 
 This updates the pinned submodule commit; commit the resulting change in the
 subject repo to record which template version it's on.
+
+After pulling a version that switched the build to XeLaTeX, existing
+assignment folders also need the `.latexmkrc` bump described under "Build
+engine" above.
 
 ## Config file design
 
