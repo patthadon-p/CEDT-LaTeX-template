@@ -1,8 +1,8 @@
 % Copy this file to course-config.tex at the ROOT of your subject repo
 % (next to the vendor/ submodule) and fill in the values below.
 %
-% CEDT-Assignment-style.sty and templates/assignment-template.tex both read
-% these macros, so this is the one place to set subject-specific info.
+% CEDT-Assignment-style.sty and templates/template/assignment-template.tex
+% both read these macros, so this is the one place to set subject-specific info.
 % course-config.tex is per-subject-repo and is NOT tracked by this template
 % repo — each subject repo owns and commits its own copy.
 
