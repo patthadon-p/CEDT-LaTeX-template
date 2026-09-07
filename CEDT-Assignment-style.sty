@@ -37,6 +37,18 @@
 \usepackage{tabularx}
 \captionsetup{labelfont=bf}
 
+% mathrsfs (\mathscr) and esvect (\vv) ship .fd files that list discrete font
+% sizes rather than ranges, so \changefontsizes{9pt} -- which asks for
+% in-between math sizes -- makes NFSS fall back to the nearest listed size and
+% emit "Font shape ... size ... substituted" warnings. Declare both families
+% here with scalable ranges instead (the <-6>/<6-8>/<8-> pattern the AMS
+% symbol fonts already use); this pre-empts the .fd files, so any requested
+% size just scales. The \DeclareFontFamily lines match ursfs.fd / uesvect.fd.
+\DeclareFontFamily{U}{rsfs}{\skewchar\font127 }
+\DeclareFontShape{U}{rsfs}{m}{n}{<-6>rsfs5 <6-8>rsfs7 <8->rsfs10}{}
+\DeclareFontFamily{U}{esvect}{}
+\DeclareFontShape{U}{esvect}{m}{n}{<-6>vect5 <6-8>vect7 <8->vect10}{}
+
 % =========================== Fonts ===========================
 % Built with XeLaTeX (see templates/template/.latexmkrc and
 % templates/style-guide/.latexmkrc): a Unicode engine is required for the Thai
