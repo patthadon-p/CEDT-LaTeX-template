@@ -230,18 +230,68 @@
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\sqbracket}[1]{\left[#1\right]}
 
-% =========================== Theorem styles ===========================
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
+% =========================== Theorem-style environments ===========================
+% theorem/lemma/proposition/corollary share one counter (cedtthmctr);
+% definition has its own; remark is unnumbered. The amsthm calling convention
+% is kept -- \begin{theorem}[optional name] ... -- and \label/\ref still yield
+% the bare number ("2.1"), so keep writing "Theorem~\ref{...}".
+%
+% Rendered as tcolorbox callouts: a coloured left spine over a faint tint,
+% sharp corners to match the rest of the template, deliberately distinct from
+% the filled corner-tab answer boxes (solution/proofbox/tosubmit). Indigo =
+% formal claims, teal = definitions, slate (and no tint) = remarks.
+% \parindent is restored for second-and-later paragraphs the same way, and for
+% the same reason, as those answer boxes -- see the note by \cedtparindent.
+\definecolor{cedtthmframe}{HTML}{3730A3} % indigo
+\definecolor{cedtdefframe}{HTML}{0F766E} % teal
+\definecolor{cedtrmkframe}{HTML}{64748B} % slate
 
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{corollary}[theorem]{Corollary}
+\newcounter{cedtthmctr}[section]
+\renewcommand{\thecedtthmctr}{\thesection.\arabic{cedtthmctr}}
+\newcounter{cedtdefctr}[section]
+\renewcommand{\thecedtdefctr}{\thesection.\arabic{cedtdefctr}}
 
-\theoremstyle{remark}
-\newtheorem*{remark}{Remark}
+\tcbset{
+  cedt statement/.style={
+    enhanced, breakable, sharp corners,
+    frame hidden, boxrule=0pt,
+    colback=#1!4!white,
+    borderline west={2.2pt}{0pt}{#1},
+    left=11pt, right=10pt, top=5pt, bottom=5pt,
+    before skip=7pt, after skip=7pt,
+    before upper={\setlength{\parindent}{\cedtparindent}\noindent},
+  },
+}
+
+% \cedtnewstatement{env}{printed word}{counter}{frame colour}{body font}
+\newcommand{\cedtnewstatement}[5]{%
+  \NewDocumentEnvironment{#1}{o}{%
+    \par\refstepcounter{#3}%
+    \begin{tcolorbox}[cedt statement=#4]%
+    {\bfseries\color{#4}#2\,\csname the#3\endcsname\IfValueT{##1}{ (##1)}.}%
+    \hskip.5em\relax #5\ignorespaces
+  }{%
+    \end{tcolorbox}%
+  }%
+}
+\cedtnewstatement{theorem}    {Theorem}    {cedtthmctr}{cedtthmframe}{\itshape}
+\cedtnewstatement{lemma}      {Lemma}      {cedtthmctr}{cedtthmframe}{\itshape}
+\cedtnewstatement{proposition}{Proposition}{cedtthmctr}{cedtthmframe}{\itshape}
+\cedtnewstatement{corollary}  {Corollary}  {cedtthmctr}{cedtthmframe}{\itshape}
+\cedtnewstatement{definition} {Definition} {cedtdefctr}{cedtdefframe}{\normalfont}
+
+% remark: unnumbered, lightest weight -- left spine only, no tint.
+\NewDocumentEnvironment{remark}{o}{%
+  \par
+  \begin{tcolorbox}[blanker, breakable, sharp corners,
+      left=11pt, top=2pt, bottom=2pt,
+      borderline west={1.6pt}{0pt}{cedtrmkframe},
+      before skip=7pt, after skip=7pt,
+      before upper={\setlength{\parindent}{\cedtparindent}\noindent}]%
+  {\bfseries\color{cedtrmkframe}Remark\IfValueT{#1}{ (#1)}.}\hskip.5em\relax\ignorespaces
+}{%
+  \end{tcolorbox}%
+}
 
 % =========================== Custom enumerate for subproblems ===========================
 \newlist{subproblems}{enumerate}{2}

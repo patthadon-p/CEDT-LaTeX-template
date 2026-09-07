@@ -113,10 +113,13 @@ whatever the highest-used number is, skipping any manually reused ones.
 % ================================================================================ %
 \section{Theorem-style environments}
 % ================================================================================ %
-Standard numbered \texttt{amsthm} environments are set up too --
+Six environments, rendered as callouts with a coloured left spine (indigo for
+claims, teal for definitions, slate for remarks).
 \texttt{theorem}/\texttt{lemma}/\texttt{proposition}/\texttt{corollary} share
 one counter, \texttt{definition} numbers separately, and \texttt{remark} is
-unnumbered:
+unnumbered. Each takes an optional name, \verb|\begin{theorem}[Euclid]|, and
+\verb|\label|/\verb|\ref| give the bare number, so write
+``Theorem~\verb|\ref{...}|''.
 
 \begin{definition}
 	An integer $n$ is \emph{even} if $n = 2k$ for some $k \in \Z$.
@@ -127,7 +130,7 @@ unnumbered:
 	order of factors.
 \end{theorem}
 
-\begin{lemma}
+\begin{lemma}\label{lem:even-square}
 	If $n^2$ is even, then $n$ is even.
 \end{lemma}
 
@@ -140,8 +143,9 @@ unnumbered:
 \end{corollary}
 
 \begin{remark}
-	These come straight from \texttt{amsthm} -- nothing custom beyond the
-	numbering/sharing scheme set up in the style file.
+	The heading colour and spine are the only custom part; numbering and the
+	shared counter behave like \texttt{amsthm}. By Lemma~\ref{lem:even-square},
+	cross-references resolve as usual.
 \end{remark}
 
 % ================================================================================ %
