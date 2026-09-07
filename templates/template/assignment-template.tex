@@ -80,4 +80,23 @@ own depending on how long the choices are.
 \end{problem}
 % ================================================================================ %
 
+% ================================================================================ %
+%                                 Writing in Thai                                  %
+% ================================================================================ %
+% This template builds with XeLaTeX (the .latexmkrc here sets that up). Thai text
+% must be wrapped: \textthai{...} for a few words inline, the thai environment
+% for whole paragraphs -- works anywhere (problem statements, \choices, section
+% titles, \asgntitle). See the style guide for the full reference.
+\begin{problem}
+\textthai{ตัวอย่างโจทย์ภาษาไทย} -- Thai and English mix freely.
+\end{problem}
+
+\begin{solution}
+	\begin{thai}
+		เขียนคำตอบเป็นภาษาไทยทั้งย่อหน้าได้ ตัวตัดคำจัดการขึ้นบรรทัดใหม่ให้เอง
+		และแทรกคณิตศาสตร์อย่าง $a^2 + b^2 = c^2$ ได้ตามปกติ
+	\end{thai}
+\end{solution}
+% ================================================================================ %
+
 \end{document}

@@ -33,17 +33,63 @@
 \usepackage{booktabs}
 \usepackage{arydshln}
 \usepackage{pdfpages}
-% Scalable Latin Modern (Computer Modern look, but available at any size) so
-% \changefontsizes{9pt} in the assignment preamble -- which rescales the whole
-% size ladder off CM's fixed design-size grid -- doesn't spray "Font shape ...
-% not available / size ... substituted" warnings. Must precede inconsolata so
-% \ttdefault stays Inconsolata, and precede fontenc per the usual load order.
-\usepackage{lmodern}
-\usepackage{inconsolata}
-\usepackage[T1]{fontenc}
 \usepackage[most]{tcolorbox}
 \usepackage{tabularx}
 \captionsetup{labelfont=bf}
+
+% =========================== Fonts ===========================
+% Built with XeLaTeX (see templates/template/.latexmkrc and
+% templates/style-guide/.latexmkrc): a Unicode engine is required for the Thai
+% support below, and it is already the engine the notebook -> PDF path uses.
+%
+% lmodern still supplies the *math* fonts; fontspec then sets the *text*
+% families as OpenType. Unlike the previous lmodern + [T1]{fontenc} 8-bit
+% setup, OpenType faces scale to any size, so \changefontsizes{9pt} in the
+% assignment preamble no longer needs a matching design size -- the
+% "Font shape ... not available / size ... substituted" warnings that used to
+% need a scalable-font workaround here are gone on their own.
+\usepackage{lmodern}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}[Ligatures=TeX]
+\setsansfont{Latin Modern Sans}[Ligatures=TeX]
+% Inconsolata for code, to match the GitHub-styled codingbox. Loaded by OTF
+% file stem, not family name: TeX Live ships the files but registers no plain
+% "Inconsolata" that fontconfig/fontspec can find by name. Scaled to the body
+% x-height (Inconsolata runs large); it has no italic cut, so \texttt\itshape
+% gets a faked slant.
+\setmonofont{Inconsolatazi4}[
+  Extension   = .otf,
+  UprightFont = *-Regular,
+  BoldFont    = *-Bold,
+  Scale       = MatchLowercase,
+]
+
+% =========================== Thai language support ===========================
+% Thai has no spaces between words, so line wrapping needs a dictionary-based
+% breaker. XeTeX ships one (ICU); pdfLaTeX would need an external segmenter,
+% and LuaLaTeX + polyglossia doesn't break Thai at all -- hence the XeLaTeX
+% build.
+%
+% The document stays English -- title block, headers, "Problem N", the box
+% tabs. Write Thai with \textthai{...} inline, or wrap a run of Thai
+% paragraphs in \begin{thai} ... \end{thai}; both switch to \thaifont and turn
+% on the line breaker. Bare (unwrapped) Thai falls back to the Latin font and
+% comes out as blank boxes, so it has to go through one of those two.
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setotherlanguage{thai}
+% Norasi (Thai Linux Working Group) rather than a Thai-only face: it carries a
+% full Latin set plus real italic/bold, so a stray English word or variable
+% inside Thai text still renders. Swap it for one document with, after loading
+% this package:  \newfontfamily\thaifont[Script=Thai]{TH Sarabun New}
+\newfontfamily\thaifont[Script=Thai]{Norasi}
+% polyglossia's thai gloss leaves XeTeX's ICU line breaker off (a documented
+% TODO in gloss-thai.ldf), so without this a Thai run is one unbreakable
+% "word" that overflows the margin. Setting the locale document-wide is safe:
+% ICU still breaks Latin only at its usual points, so English is unaffected
+% (checked against the style guide). The stretch glue lets Thai lines justify.
+\XeTeXlinebreaklocale "th"
+\XeTeXlinebreakskip = 0pt plus 0.1em minus 0.01em
 
 \allowdisplaybreaks
 
@@ -370,7 +416,7 @@
   % anything listings ships a \lstdefinelanguage for) overrides this per box,
   % since codingbox's optional arg is appended after `style=notepadstyle` in
   % the same options list, so it applies last. See
-  % templates/assignment-template.tex for worked C++/bash examples.
+  % templates/style-guide/style-guide.tex for worked C++/bash examples.
   language=Python,
   backgroundcolor=\color{editorbg},
   basicstyle=\ttfamily\small\color{editortext},

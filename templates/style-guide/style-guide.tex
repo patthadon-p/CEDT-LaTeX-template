@@ -32,6 +32,56 @@ For example: $\forall x \in \R,\ \abs{x} \geq 0$, and
 $\norm{v} = \sqrt{\paren{v_1^2 + v_2^2}}$.
 
 % ================================================================================ %
+\section{Writing in Thai}
+% ================================================================================ %
+The document language is English, but Thai can be dropped in anywhere. This
+needs the XeLaTeX build (\texttt{.latexmkrc} already sets it up); it won't
+work under pdf/lua\LaTeX. Thai text must be \emph{wrapped} -- unwrapped Thai
+falls back to the Latin font and comes out as blank boxes.
+
+\verb|\textthai{...}| switches to Thai for a few words inline:
+\textthai{อักษรไทยผสมกับภาษาอังกฤษ} in the middle of an English sentence, or the
+other way round: \textthai{ตัวแปร} \(x\) \textthai{มีค่าเป็นจำนวนเต็ม}.
+
+The \verb|thai| environment is for whole paragraphs -- it turns on the
+dictionary-based line breaker, so long Thai (which has no spaces between words)
+wraps correctly:
+\begin{thai}
+	ภาษาไทยไม่มีการเว้นวรรคระหว่างคำ การขึ้นบรรทัดใหม่จึงต้องอาศัยการตัดคำด้วยพจนานุกรม
+	ซึ่ง XeTeX ทำให้โดยอัตโนมัติ ย่อหน้านี้ยาวพอที่จะขึ้นบรรทัดใหม่หลายครั้ง
+	และยังแทรกคณิตศาสตร์อย่าง \(a^2 + b^2 = c^2\) กับตัวเลข 42 ได้ตามปกติ
+\end{thai}
+
+It composes with everything else -- a Thai problem statement, a Thai
+\verb|solution|, Thai \verb|\choices|:
+\begin{problem}
+\textthai{จงพิสูจน์ว่าผลบวกของจำนวนเต็มคู่สองจำนวนเป็นจำนวนคู่}
+\begin{subproblems}
+	\item \textthai{ระบุนิยามของจำนวนคู่}
+	\item Give the definition in English.
+\end{subproblems}
+\end{problem}
+\begin{solution}
+	\begin{thai}
+		ให้ \(a = 2m\) และ \(b = 2n\) โดยที่ \(m, n \in \Z\) จะได้
+		\(a + b = 2(m + n)\) ซึ่งเป็นจำนวนคู่
+	\end{thai}
+\end{solution}
+\begin{problem}
+\textthai{ข้อใดต่อไปนี้ถูกต้อง}
+\begin{subproblems}
+	\item \choices{\textthai{ถูก}, \textthai{ผิด}, \textthai{ไม่แน่ใจ}, \textthai{ไม่มีข้อมูล}}
+\end{subproblems}
+\end{problem}
+
+The Thai face is Norasi (it ships a Latin set and a real italic/bold, so a
+stray English word inside Thai still typesets). Override it for one document
+after loading the style package:
+\begin{verbatim}
+\newfontfamily\thaifont[Script=Thai]{TH Sarabun New}
+\end{verbatim}
+
+% ================================================================================ %
 \section{Problems and sub-problems}
 % ================================================================================ %
 \begin{problem}
