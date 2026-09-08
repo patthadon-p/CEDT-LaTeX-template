@@ -241,6 +241,7 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\sqbracket}[1]{\left[#1\right]}
+\newcommand{\Bracket}[2]{\left\langle #1 \;\middle|\; #2 \right\rangle}
 
 % =========================== Theorem-style environments ===========================
 % theorem/lemma/proposition/corollary share one counter (cedtthmctr);
@@ -265,14 +266,14 @@
 
 \tcbset{
   cedt statement/.style={
-    enhanced, breakable, sharp corners,
-    frame hidden, boxrule=0pt,
-    colback=#1!4!white,
-    borderline west={2.2pt}{0pt}{#1},
-    left=11pt, right=10pt, top=5pt, bottom=5pt,
-    before skip=7pt, after skip=7pt,
-    before upper={\setlength{\parindent}{\cedtparindent}\noindent},
-  },
+      enhanced, breakable, sharp corners,
+      frame hidden, boxrule=0pt,
+      colback=#1!4!white,
+      borderline west={2.2pt}{0pt}{#1},
+      left=11pt, right=10pt, top=5pt, bottom=5pt,
+      before skip=7pt, after skip=7pt,
+      before upper={\setlength{\parindent}{\cedtparindent}\noindent},
+    },
 }
 
 % \cedtnewstatement{env}{printed word}{counter}{frame colour}{body font}
@@ -280,9 +281,9 @@
   \NewDocumentEnvironment{#1}{o}{%
     \par\refstepcounter{#3}%
     \begin{tcolorbox}[cedt statement=#4]%
-    {\bfseries\color{#4}#2\,\csname the#3\endcsname\IfValueT{##1}{ (##1)}.}%
-    \hskip.5em\relax #5\ignorespaces
-  }{%
+      {\bfseries\color{#4}#2\,\csname the#3\endcsname\IfValueT{##1}{ (##1)}.}%
+      \hskip.5em\relax #5\ignorespaces
+      }{%
     \end{tcolorbox}%
   }%
 }
@@ -300,8 +301,8 @@
       borderline west={1.6pt}{0pt}{cedtrmkframe},
       before skip=7pt, after skip=7pt,
       before upper={\setlength{\parindent}{\cedtparindent}\noindent}]%
-  {\bfseries\color{cedtrmkframe}Remark\IfValueT{#1}{ (#1)}.}\hskip.5em\relax\ignorespaces
-}{%
+    {\bfseries\color{cedtrmkframe}Remark\IfValueT{#1}{ (#1)}.}\hskip.5em\relax\ignorespaces
+    }{%
   \end{tcolorbox}%
 }
 
