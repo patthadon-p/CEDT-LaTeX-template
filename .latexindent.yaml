@@ -8,11 +8,12 @@
 #
 # Both targets pass -l so this file is picked up regardless of cwd.
 
-# codingbox (CEDT-Assignment-style.sty) holds literal source code inside
-# \begin{codingbox}...\end{codingbox}. Without this, latexindent would
+# codingbox / codingbox* (CEDT-Assignment-style.sty) hold literal source code
+# inside \begin{codingbox}...\end{codingbox}. Without this, latexindent would
 # reflow/reindent the code itself instead of leaving it verbatim.
 verbatimEnvironments:
   codingbox: 1
+  codingbox*: 1
 
 # subproblems / subproblems_alpha / Tsubsubproblems (CEDT-Assignment-style.sty)
 # are custom \item lists, same as itemize/enumerate. Without this, wrapped

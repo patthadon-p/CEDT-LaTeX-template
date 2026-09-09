@@ -551,6 +551,31 @@
     }
 }
 
+% Nesting-safe sibling of codingbox for use INSIDE solution/proofbox/tosubmit.
+% codingbox itself is its own tcolorbox, which breaks tcolorbox's breakable
+% \vsplit-based page-splitting when nested inside another breakable box --
+% confirmed independent of codingbox's own breakable/enhanced/decoration
+% settings (tried removing each in turn; identical failure every time), and
+% independent of codingbox's tcolorbox status too (plain \lstlisting nests
+% fine) -- so it's the *nesting of two tcolorboxes* that's unsupported, not
+% anything specific to codingbox's own options. tcolorbox reports it as
+% "Package tcolorbox Warning: The upper box part has become overfull" (the
+% outer box's \vsplit can't find a legal breakpoint through the nested one),
+% and the visible result is silent content overflow past the page, not just
+% a cosmetic glitch -- so don't try to "fix" this by tweaking codingbox's own
+% keys again; the fix has to avoid the second nested tcolorbox entirely.
+% codingbox* does that: plain listings via \lstnewenvironment (the mechanism
+% listings itself uses to define \lstlisting -- a hand-rolled wrapper around
+% \begin{lstlisting}/\end{lstlisting} hits listings' own verbatim-scanning
+% edge cases when invoked through macro expansion), so the outer box's own
+% breakable splitting sees ordinary page-breakable material and works. Same
+% [language=...] override and notepadstyle colors/line numbers as codingbox,
+% just without its border/gutter chrome (the enclosing answer box already
+% supplies a border).
+\lstnewenvironment{codingbox*}[1][]{%
+  \lstset{style=notepadstyle,#1}%
+}{}
+
 % =========================== Figures ===========================
 % Usage: \fig[width]{path}{caption}{label}
 %   width defaults to 0.7\linewidth; the label is prefixed with "fig:"

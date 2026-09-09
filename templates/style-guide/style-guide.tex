@@ -233,6 +233,23 @@ for _ in $(seq 1 10); do
 done
 \end{codingbox}
 
+\verb|codingbox| is its own box, so it must never go \emph{inside} another
+breakable box (\verb|solution|/\verb|proofbox|/\verb|tosubmit|) -- tcolorbox
+can't reliably split a breakable box around a second, nested one, and the
+failure is silent content overflow, not an error. Use \verb|codingbox*|
+there instead: same \verb|[language=...]| override, but plain \texttt{listings}
+underneath (no nested box), so it breaks across pages fine:
+\begin{solution}
+	Here's the code:
+	\begin{codingbox*}[language=Python]
+def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+\end{codingbox*}
+\end{solution}
+
 % ================================================================================ %
 \section{Figures}
 % ================================================================================ %
