@@ -474,6 +474,14 @@
 % Listings Style
 % ======================================
 
+\lstdefinelanguage{YAML}{
+  keywords={true,false,null},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]'
+}
+
 \lstdefinestyle{notepadstyle}{
   % Default language; \begin{codingbox}[language=C++] (or bash, Java, etc. --
   % anything listings ships a \lstdefinelanguage for) overrides this per box,
