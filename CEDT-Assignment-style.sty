@@ -7,14 +7,15 @@
 \RequirePackage{enumitem} % Custom lists
 \RequirePackage{hyperref} % Clickable references
 \RequirePackage{graphicx} % Images (\includegraphics)
-\RequirePackage{tikz} % Diagrams
-\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing}
+\RequirePackage{tikz}     % Diagrams
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing, circuits.logic.US}
 \RequirePackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \RequirePackage{xcolor} % Color support
 
 % Use Package
 \usepackage{soul}
+\usepackage{array}
 \usepackage{float}
 \usepackage{braket}
 \usepackage{cancel}
@@ -36,8 +37,6 @@
 \usepackage{tabularx}
 \usepackage[most]{tcolorbox}
 \captionsetup{labelfont=bf}
-
-\usetikzlibrary{circuits.logic.US, positioning, calc}
 
 % mathrsfs (\mathscr) and esvect (\vv) ship .fd files that list discrete font
 % sizes rather than ranges, so \changefontsizes{9pt} -- which asks for
