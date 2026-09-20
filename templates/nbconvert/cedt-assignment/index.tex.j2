@@ -40,6 +40,33 @@
     % while CEDT-Assignment-style loads plain `\usepackage{enumitem}`.
     \PassOptionsToPackage{inline}{enumitem}
     %
+    % Third clash in the same family, and this one is fatal rather than
+    % cosmetic: base.tex.j2 does `\usepackage{enumerate}` (the old tools
+    % package) *after* this block has already pulled enumitem in through
+    % CEDT-Assignment-style. enumerate.sty redefines \enumerate but leaves
+    % \endenumerate alone, so `\begin{enumerate}` runs enumerate.sty's code
+    % while `\end{enumerate}` is still enumitem's \enit@endenumerate -- which
+    % expands \enit@after, a macro only enumitem's own \enumerate ever
+    % defines. Every numbered list in a markdown cell then dies with
+    % "! Undefined control sequence. \enit@endenumerate ->\enit@after".
+    % Bullet lists pair up fine either way, which is why this only bites on
+    % notebooks that happen to use "1." lists. Loading enumerate.sty here,
+    % *before* the style file, restores stock nbconvert's ordering: enumitem
+    % is loaded last and defines \enumerate and \endenumerate as a matching
+    % pair, and base.tex.j2's later \usepackage{enumerate} is a no-op.
+    \usepackage{enumerate}
+    %
+    % Same shape of problem, different package: CEDT-Assignment-style loads
+    % arydshln, and arydshln only knows how to coexist with array/longtable if
+    % those are already loaded when it patches \\ (\adl@@cr). base.tex.j2
+    % loads longtable/booktabs/array further down, i.e. too late, so a pandoc
+    % markdown table -- always a longtable with booktabs rules -- blows up on
+    % its \midrule with "! Undefined control sequence. \adl@@cr ...\adl@rowsL".
+    % Pulling array and longtable in here, ahead of the style file, lets
+    % arydshln patch them properly; base.tex.j2's own copies are then no-ops.
+    \usepackage{array}
+    \usepackage{longtable}
+    %
     % nbconvert's PDFExporter always compiles in an isolated temp directory
     % (see nbconvert/exporters/pdf.py), so a relative path -- to either the
     % submodule's CEDT-Assignment-style.sty or the subject repo's own
@@ -61,6 +88,13 @@
       {\PackageWarning{cedt-assignment}{CEDT-Assignment-style.sty not found on TEXINPUTS -- export TEXINPUTS="<subject repo root>:<subject repo root>/vendor/template:$TEXINPUTS" before running jupyter nbconvert}}
     \makeatother
     ((( super() )))
+    %
+    % amsmath ships bmatrix/pmatrix/... with room for 10 columns. A statevector
+    % printed by qiskit's array_to_latex is one row of 2^n entries (64 for six
+    % qubits), so anything past the 10th column errors with "Extra alignment tab
+    % has been changed to \\cr". The counter only sizes the alignment preamble
+    % amsmath builds, so raising it costs nothing when the matrices are small.
+    \setcounter{MaxMatrixCols}{128}
 ((*- endblock packages *))
 
 ((*- block margins *))
@@ -72,3 +106,38 @@
     \subject
     ((( super() )))
 ((*- endblock predoc *))
+
+
+((= ==========================================================================
+    A text/latex output is copied into the document verbatim by the stock
+    template, which assumes it is valid LaTeX. Output produced for Jupyter's
+    MathJax often isn't. qiskit's array_to_latex, for one, returns
+    "$$\n\n\begin{bmatrix}...": MathJax ignores the blank line, but to LaTeX it
+    is a \par inside display math -- "! Missing $ inserted." and the build dies.
+    Those same arrays are also much wider than the text block (a 6-qubit
+    statevector is one row of 64 columns), so even once it compiles it runs off
+    the page.
+
+    So, for outputs that are display math ($$...$$), drop the blank lines and
+    re-wrap the body as inline math inside \adjustbox (adjustbox is loaded by
+    base.tex.j2), which shrinks it to \linewidth only when it would otherwise
+    overflow and leaves normal-sized math alone. Anything that is not display
+    math -- a tabular from pandas' to_latex, say -- is passed through untouched.
+
+    Jinja comments (((= =))) rather than % ones: the whitespace-trimming tags
+    below would otherwise pull \begin{center} up onto the end of a % line and
+    comment it out.
+========================================================================== =))
+((*- block data_latex -*))
+((*- set _tex = output.data['text/latex'] | strip_files_prefix -*))
+((*- set _body = _tex.strip() -*))
+((*- if _body.startswith('$$') and _body.endswith('$$') -*))
+((*- set _math = _body[2:-2].split('\n') | map('trim') | reject('equalto', '') | join(' ') *))
+
+\begin{center}
+\adjustbox{max width=\linewidth}{$\displaystyle ((( _math )))$}
+\end{center}
+((*- else *))
+((( _tex )))
+((*- endif *))
+((*- endblock data_latex *))
