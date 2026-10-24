@@ -12,6 +12,16 @@ LATEXINDENT_CONF := $(TEMPLATE_DIR)/.latexindent.yaml
 NBCONVERT_TEMPLATE_DIR := $(TEMPLATE_DIR)/templates/nbconvert
 JUPYTER := $(CURDIR)/.venv/bin/jupyter
 
+# nb-pdf drops the notebook PDF's header/footer by default: \myappendix stamps
+# the write-up's own on every included page. NB_HEADER=1 keeps them, for a
+# notebook PDF that is handed in on its own.
+NB_HEADER ?= 0
+ifeq ($(NB_HEADER),1)
+NB_TEMPLATE := cedt-assignment
+else
+NB_TEMPLATE := cedt-assignment-plain
+endif
+
 .PHONY: help build watch clean clean-all new fmt fmt-all nb-pdf
 
 help:
@@ -23,7 +33,8 @@ help:
 	@echo "  make new NAME=<number-or-name> Scaffold a new folder from the template (prefix from \\AssignmentLabel in course-config.tex)"
 	@echo "  make fmt DIR=<folder>          Format one project's .tex files in place"
 	@echo "  make fmt-all                   Format every project's .tex files in place"
-	@echo "  make nb-pdf NB=<path/to.ipynb> Export a notebook to PDF styled with CEDT-Assignment-style"
+	@echo "  make nb-pdf NB=<path/to.ipynb> Export a notebook to PDF styled with CEDT-Assignment-style,"
+	@echo "                                 without header/footer (for \\myappendix); add NB_HEADER=1 to keep them"
 
 build:
 	@test -n "$(DIR)" || (echo "Usage: make build DIR=assignment-06" >&2 && exit 1)
@@ -69,5 +80,5 @@ nb-pdf:
 	@test -x "$(JUPYTER)" || (echo "No jupyter found at $(JUPYTER) -- see .venv/ setup in README.md" >&2 && exit 1)
 	TEXINPUTS="$(CURDIR):$(TEMPLATE_DIR):$$TEXINPUTS" "$(JUPYTER)" nbconvert --to pdf \
 		--TemplateExporter.extra_template_basedirs="$(NBCONVERT_TEMPLATE_DIR)" \
-		--template=cedt-assignment \
+		--template=$(NB_TEMPLATE) \
 		"$(NB)"

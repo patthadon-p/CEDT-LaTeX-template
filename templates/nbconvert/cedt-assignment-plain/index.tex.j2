@@ -1,0 +1,24 @@
+((*- extends 'cedt-assignment.tex.j2' -*))
+
+%===============================================================================
+% cedt-assignment without the header and footer -- the default for `make nb-pdf`.
+% Everything else (fonts, 9pt body, margins, code/output styling) comes from
+% cedt-assignment unchanged. The PDF is meant to be pulled into a write-up with
+% \myappendix, whose \includepdf[pagecommand={}] stamps the write-up's own
+% header/footer on every included page; a header printed by the notebook PDF
+% as well would show up twice. The 3cm margins stay as they are, so the
+% stamped header lands where this one would have been.
+%===============================================================================
+
+((*- block predoc *))
+    ((( super() )))
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    % \maketitle switches its own page to the `plain' style; empty it too.
+    \fancypagestyle{plain}{%
+      \fancyhf{}%
+      \renewcommand{\headrulewidth}{0pt}%
+      \renewcommand{\footrulewidth}{0pt}%
+    }
+((*- endblock predoc *))
