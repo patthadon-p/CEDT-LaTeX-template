@@ -24,6 +24,9 @@ vendored into each subject repo as a git submodule rather than copy-pasted.
 - `templates/nbconvert/cedt-assignment/` — custom `jupyter nbconvert` LaTeX
   template so notebook-exported PDFs (`make nb-pdf`) get the same
   fonts/margins/header as the `.tex` write-ups.
+  `templates/nbconvert/cedt-assignment-plain/` is the same template without
+  the header/footer (the `make nb-pdf` default, for PDFs pulled in with
+  `\myappendix`).
 - `.latexindent.yaml` — formatter config for `make fmt`.
 - `new-assignment.sh` — scaffolds a new `assignment-XX/` folder.
 - `Makefile.include` — generic `build`/`watch`/`clean`/`fmt`/`new`/`nb-pdf`
@@ -113,8 +116,17 @@ PDF via `jupyter nbconvert`, styled with the same `CEDT-Assignment-style.sty`
 fonts/margins/header as the `.tex` write-ups:
 
 ```bash
-make nb-pdf NB=assignment-01/code/assignment-01.ipynb
+make nb-pdf NB=assignment-01/code/assignment-01.ipynb               # no header/footer (default)
+make nb-pdf NB=assignment-01/code/assignment-01.ipynb NB_HEADER=1   # keep header/footer
 ```
+
+By default the PDF has no header or footer (template
+`cedt-assignment-plain`): it is meant to be included in a write-up with
+`\myappendix`, which stamps the write-up's own header and footer on every
+included page, so a header in the notebook PDF itself would appear twice.
+The margins are unchanged, so the stamped header sits exactly where the
+notebook's own would have been. Pass `NB_HEADER=1` (template
+`cedt-assignment`) for a notebook PDF that is handed in on its own.
 
 The PDF is written next to the notebook, same as `jupyter nbconvert`'s
 default. This needs `jupyter`/`nbconvert` in the subject repo's own
@@ -135,9 +147,11 @@ hand instead of through `make nb-pdf`? Set `TEXINPUTS` the same way first:
 export TEXINPUTS="$(pwd):$(pwd)/vendor/template:$TEXINPUTS"
 jupyter nbconvert --to pdf \
   --TemplateExporter.extra_template_basedirs=vendor/template/templates/nbconvert \
-  --template=cedt-assignment \
+  --template=cedt-assignment-plain \
   assignment-01/code/assignment-01.ipynb
 ```
+
+(`--template=cedt-assignment` for the version with header/footer.)
 
 ## Pulling in template updates
 
